@@ -1,7 +1,7 @@
 #! /usr/bin/python3
 
 from lxml import html
-import requests
+import requests, sys
 
 def get_entries():
     # make links of every page groups
@@ -16,6 +16,7 @@ def get_entries():
         # if we have next page
         while len(next_link) > 0:
             # download it
+            print("downloading page from %s ..." % next_link[0], file=sys.stderr)
             content = html.fromstring(requests.get(next_link[0]).text)
 
             # get all the words in this page
@@ -35,9 +36,9 @@ def get_meanings(link):
 def main():
     entries = get_entries()
     for (word, link) in entries:
-        print(word, end='\t')
-        meanings = get_meanings(link)
-        print(meanings)
+        print(word)
+        # meanings = get_meanings(link)
+        # print(meanings)
 
 if __name__ == '__main__':
     main()
