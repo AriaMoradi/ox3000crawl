@@ -32,12 +32,14 @@ def get_entries():
     return entries
 
 def innerHTML(sentence):
-    (sentence.text or '') + ''.join([etree.tostring(child).decode('utf-8') for child in sentence.getchildren()]) +
+    return (sentence.text or '') + \
+            ''.join([etree.tostring(child).decode('utf-8') for child in sentence.getchildren()])
 
 def get_definitions(link):
+    print("downloading page from %s ..." % link, file=sys.stderr)
     content = html.fromstring(requests.get(link).text)
     ox3000defs = content.cssselect('.sn-gs > [ox3000=y]')
-    defhtml = '<ol>\n'
+    defhtml = '<ol> '
     for defitem in ox3000defs:
         # get definition of this item
         defelems = defitem.cssselect('.def')
@@ -45,18 +47,17 @@ def get_definitions(link):
         definition = defelems[0].text
 
         examples = defitem.cssselect('.sn-g > .x-gs > .x-g .x')
-        examhtml = '<ol>' + ''.join([ \
-                       '<li>' + \
-                           innerHTML(sentence) \
-                       '</li>' for sentence in examples]) + \
-                   '</ol>\n'
+        examhtml = '<ul class = "eg"> '
+        for sentence in examples:
+            examhtml += '<li> ' + innerHTML(sentence) + ' </li> '
+        examhtml += '</ul> '
 
-        defs += '<li>\n'
-        defs += '<div class="def">' + definitions + '</div>\n'
-        defs += '<div class="eg">\n' + examhtml + '</div>\n'
-        defs += '</li>\n'
-    defs += '</ol>\n'
-    return defs
+        defhtml += '<li> '
+        defhtml += '<div class="def">' + definition + '</div> '
+        defhtml += examhtml
+        defhtml += '</li> '
+    defhtml += '</ol> '
+    return defhtml
 
 def main():
     entries = get_entries()
