@@ -1,9 +1,10 @@
 #! /usr/bin/python3
 
-from lxml import html
+from lxml import html, etree
 import requests, sys
 
 def get_entries():
+    """Get all the Oxford 3000 (R) wrods from http://www.oxfordlearnersdictionaries.com/wordlist/english/oxford3000/Oxford3000 and links to their definition."""
     # make links of every page groups
     entry_groups = ['A-B', 'C-D', 'E-G', 'H-K', 'L-N', 'O-P', 'Q-R', 'S', 'T', 'U-Z']
     entry_groups_url_prefix = 'http://www.oxfordlearnersdictionaries.com/wordlist/english/oxford3000/Oxford3000_'
@@ -30,15 +31,39 @@ def get_entries():
             next_link = list(next_link)
     return entries
 
-def get_meanings(link):
-    pass
+def innerHTML(sentence):
+    (sentence.text or '') + ''.join([etree.tostring(child).decode('utf-8') for child in sentence.getchildren()]) +
+
+def get_definitions(link):
+    content = html.fromstring(requests.get(link).text)
+    ox3000defs = content.cssselect('.sn-gs > [ox3000=y]')
+    defhtml = '<ol>\n'
+    for defitem in ox3000defs:
+        # get definition of this item
+        defelems = defitem.cssselect('.def')
+        if len(defelems) > 1: print('Def from', link, 'has multi .def element', file=sys.stderr)
+        definition = defelems[0].text
+
+        examples = defitem.cssselect('.sn-g > .x-gs > .x-g .x')
+        examhtml = '<ol>' + ''.join([ \
+                       '<li>' + \
+                           innerHTML(sentence) \
+                       '</li>' for sentence in examples]) + \
+                   '</ol>\n'
+
+        defs += '<li>\n'
+        defs += '<div class="def">' + definitions + '</div>\n'
+        defs += '<div class="eg">\n' + examhtml + '</div>\n'
+        defs += '</li>\n'
+    defs += '</ol>\n'
+    return defs
 
 def main():
     entries = get_entries()
     for (word, link) in entries:
-        print(word)
-        # meanings = get_meanings(link)
-        # print(meanings)
+        definitions = get_definitions(link)
+        print(word, link, definitions, sep='\t', end='')
+        
 
 if __name__ == '__main__':
     main()
