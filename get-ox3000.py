@@ -34,6 +34,30 @@ def get_entries():
             links = content.cssselect('#paging a')
             next_link = map(lambda e: e.get('href'), filter(lambda e: e.text == '>', links))
             next_link = list(next_link)
+
+    more_entries = []
+    # check different part of speech in each word
+    for (word, link) in entries:
+        print("downloading page from %s ..." % link, file=sys.stderr)
+        content = html.fromstring(session.get(link).text)
+
+        # get nearby words list
+        nearby_words = content.cssselect('.nearby>ul>li>a')
+        for nearby_word in nearby_words:
+            # get the exact word
+            this_word = nearby_word.cssselect('data.hwd')[0].text.strip()
+            # we want those that is the same as current word
+            if this_word != word.strip(): continue
+
+            this_link = nearby_word.get('href')
+            print("nearby: downloading page from %s ..." % this_link, file=sys.stderr)
+            this_page = html.fromstring(session.get(this_link).text)
+            if len(this_page.cssselect('.oxford3000')) == 0: continue
+            
+            print("capture %s from %s" % (word, this_link), file=sys.stderr)
+            more_entries.append((word, this_link))
+        
+    entries.extend(more_entries)
     return entries
 
 def innerHTML(sentence):
