@@ -4,6 +4,7 @@ version = "0.1.0"
 authors = ["Peng Guanwen <pgw1999@outlook.com>"]
 
 [dependencies]
-tokio-curl = '*'
+tokio-core = '*'
 futures = '*'
-scraper = '*'
+hyper = '*'
+kuchiki = '*'
