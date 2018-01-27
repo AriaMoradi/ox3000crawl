@@ -30,7 +30,7 @@
     <nav class="sidebar">
         <div class="sidebar-menu">&#9776;</div>
         
-        <p class='location'>Crate cssparser</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#reexports">Re-exports</a></li><li><a href="#modules">Modules</a></li><li><a href="#macros">Macros</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li><li><a href="#functions">Functions</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'cssparser', ty: 'mod', relpath: '../'};</script></div>
+        <p class='location'>Crate cssparser</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#modules">Modules</a></li><li><a href="#macros">Macros</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li><li><a href="#functions">Functions</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'cssparser', ty: 'mod', relpath: '../'};</script></div>
     </nav>
 
     <nav class="sub">
@@ -49,20 +49,18 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/cssparser/lib.rs.html#5-121' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../src/cssparser/lib.rs.html#5-147' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>Implementation of <a href="https://drafts.csswg.org/css-syntax/">CSS Syntax Module Level 3</a> for Rust.</p>
 <h1 id="input" class="section-header"><a href="#input">Input</a></h1>
 <p>Everything is based on <code>Parser</code> objects, which borrow a <code>&amp;str</code> input.
-If you have bytes (from a file, the network, or something)
-and want to support character encodings other than UTF-8,
-see the <code>stylesheet_encoding</code> function,
-which can be used together with rust-encoding or encoding-rs.</p>
+If you have bytes (from a file, the network, or something),
+see the <code>decode_stylesheet_bytes</code> function.</p>
 <h1 id="conventions-for-parsing-functions" class="section-header"><a href="#conventions-for-parsing-functions">Conventions for parsing functions</a></h1>
 <ul>
 <li>Take (at least) a <code>input: &amp;mut cssparser::Parser</code> parameter</li>
 <li>Return <code>Result&lt;_, ()&gt;</code></li>
 <li>When returning <code>Ok(_)</code>,
-the function must have consumed exactly the amount of input that represents the parsed value.</li>
+the function must have consume exactly the amount of input that represents the parsed value.</li>
 <li>When returning <code>Err(())</code>, any amount of input may have been consumed.</li>
 </ul>
 <p>As a consequence, when calling another parsing function, either:</p>
@@ -98,8 +96,7 @@ it restores the position inside the input to the one saved before calling the cl
     <span class="kw">let</span> <span class="ident">second</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">try</span>(<span class="ident">LengthOrPercentage</span>::<span class="ident">parse</span>).<span class="ident">unwrap_or</span>(<span class="ident">first</span>);
     (<span class="ident">first</span>, <span class="ident">second</span>)
 }</pre>
-</div><h2 id='reexports' class='section-header'><a href="#reexports">Re-exports</a></h2>
-<table><tr><td><code>pub use <a class="mod" href="../cssparser_macros/index.html" title="mod cssparser_macros">cssparser_macros</a>::*;</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
+</div><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
 <table>
                        <tr class=' module-item'>
                            <td><a class="mod" href="Delimiter/index.html"
@@ -111,19 +108,11 @@ it restores the position inside the input to the one saved before calling the cl
                        </tr></table><h2 id='macros' class='section-header'><a href="#macros">Macros</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class="macro" href="macro.ascii_case_insensitive_phf_map.html"
-                                  title='macro cssparser::ascii_case_insensitive_phf_map'>ascii_case_insensitive_phf_map</a></td>
-                           <td class='docblock-short'>
-                                <p>Define a function <code>$name(&amp;str) -&gt; Option&lt;&amp;'static $ValueType&gt;</code></p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
                            <td><a class="macro" href="macro.match_ignore_ascii_case.html"
                                   title='macro cssparser::match_ignore_ascii_case'>match_ignore_ascii_case</a></td>
                            <td class='docblock-short'>
-                                <p>Expands to a <code>match</code> expression with string patterns,
-matching case-insensitively in the ASCII range.</p>
+                                <p>This macro is equivalent to a <code>match</code> expression on an <code>&amp;str</code> value,
+but matching is case-insensitive in the ASCII range.</p>
 
                            </td>
                        </tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
@@ -183,7 +172,7 @@ and keeps track of nested blocks and functions.</p>
                            <td><a class="struct" href="struct.RGBA.html"
                                   title='struct cssparser::RGBA'>RGBA</a></td>
                            <td class='docblock-short'>
-                                <p>A color with red, green, blue, and alpha components, in a byte each.</p>
+                                <p>A color with red, green, blue, and alpha components.</p>
 
                            </td>
                        </tr>
@@ -217,14 +206,6 @@ obtained from the <code>Parser::position</code> method.</p>
                                   title='struct cssparser::TokenSerializationType'>TokenSerializationType</a></td>
                            <td class='docblock-short'>
                                 <p>A category of token. See the <code>needs_separator_when_before</code> method.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.UnicodeRange.html"
-                                  title='struct cssparser::UnicodeRange'>UnicodeRange</a></td>
-                           <td class='docblock-short'>
-                                <p>One contiguous range of code points.</p>
 
                            </td>
                        </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
@@ -273,14 +254,6 @@ or end with a <code>;</code> semicolon.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class="trait" href="trait.EncodingSupport.html"
-                                  title='trait cssparser::EncodingSupport'>EncodingSupport</a></td>
-                           <td class='docblock-short'>
-                                <p>Abstraction for avoiding a dependency from cssparser to an encoding library</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
                            <td><a class="trait" href="trait.QualifiedRuleParser.html"
                                   title='trait cssparser::QualifiedRuleParser'>QualifiedRuleParser</a></td>
                            <td class='docblock-short'>
@@ -297,6 +270,14 @@ or end with a <code>;</code> semicolon.</p>
                            </td>
                        </tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
 <table>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.decode_stylesheet_bytes.html"
+                                  title='fn cssparser::decode_stylesheet_bytes'>decode_stylesheet_bytes</a></td>
+                           <td class='docblock-short'>
+                                <p>Determine the character encoding of a CSS stylesheet and decode it.</p>
+
+                           </td>
+                       </tr>
                        <tr class=' module-item'>
                            <td><a class="fn" href="fn.parse_color_keyword.html"
                                   title='fn cssparser::parse_color_keyword'>parse_color_keyword</a></td>
@@ -353,14 +334,6 @@ Return <code>Ok((A, B))</code>, or <code>Err(())</code> for a syntax error.</p>
                                   title='fn cssparser::serialize_string'>serialize_string</a></td>
                            <td class='docblock-short'>
                                 <p>Write a double-quoted CSS string token, escaping content as necessary.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.stylesheet_encoding.html"
-                                  title='fn cssparser::stylesheet_encoding'>stylesheet_encoding</a></td>
-                           <td class='docblock-short'>
-                                <p>Determine the character encoding of a CSS stylesheet.</p>
 
                            </td>
                        </tr></table></section>

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/root/.cargo/registry/src/github.com-1ecc6299db9ec823/html5ever-0.20.0/src/tree_builder/data.rs`.">
+    <meta name="description" content="Source to the Rust file `/root/.cargo/registry/src/github.com-1ecc6299db9ec823/html5ever-0.5.4/src/tree_builder/data.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>data.rs.html -- source</title>
@@ -202,8 +202,9 @@
 <span id="156">156</span>
 <span id="157">157</span>
 <span id="158">158</span>
+<span id="159">159</span>
 </pre><pre class="rust ">
-<span class="comment">// Copyright 2014-2017 The html5ever Project Developers. See the</span>
+<span class="comment">// Copyright 2014 The html5ever Project Developers. See the</span>
 <span class="comment">// COPYRIGHT file at the top-level directory of this distribution.</span>
 <span class="comment">//</span>
 <span class="comment">// Licensed under the Apache License, Version 2.0 &lt;LICENSE-APACHE or</span>
@@ -212,10 +213,11 @@
 <span class="comment">// option. This file may not be copied, modified, or distributed</span>
 <span class="comment">// except according to those terms.</span>
 
-<span class="kw">use</span> <span class="ident">interface</span>::{<span class="ident">QuirksMode</span>, <span class="ident">Quirks</span>, <span class="ident">LimitedQuirks</span>, <span class="ident">NoQuirks</span>};
-<span class="kw">use</span> <span class="ident">tendril</span>::<span class="ident">StrTendril</span>;
 <span class="kw">use</span> <span class="ident">tokenizer</span>::<span class="ident">Doctype</span>;
+<span class="kw">use</span> <span class="ident">tree_builder</span>::<span class="ident">interface</span>::{<span class="ident">QuirksMode</span>, <span class="ident">Quirks</span>, <span class="ident">LimitedQuirks</span>, <span class="ident">NoQuirks</span>};
+
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ascii</span>::<span class="ident">AsciiExt</span>;
+<span class="kw">use</span> <span class="ident">tendril</span>::<span class="ident">StrTendril</span>;
 
 <span class="comment">// These should all be lowercase, for ASCII-case-insensitive matching.</span>
 <span class="kw">static</span> <span class="ident">QUIRKY_PUBLIC_PREFIXES</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> [<span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>] <span class="op">=</span> <span class="kw-2">&amp;</span>[

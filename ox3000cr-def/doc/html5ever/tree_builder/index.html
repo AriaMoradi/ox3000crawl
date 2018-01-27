@@ -30,7 +30,7 @@
     <nav class="sidebar">
         <div class="sidebar-menu">&#9776;</div>
         
-        <p class='location'>Module tree_builder</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#reexports">Re-exports</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li><li><a href="#functions">Functions</a></li></ul></div><p class='location'><a href='../index.html'>html5ever</a></p><script>window.sidebarCurrent = {name: 'tree_builder', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script></div>
+        <p class='location'>Module tree_builder</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#reexports">Re-exports</a></li><li><a href="#modules">Modules</a></li><li><a href="#structs">Structs</a></li></ul></div><p class='location'><a href='../index.html'>html5ever</a></p><script>window.sidebarCurrent = {name: 'tree_builder', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script></div>
     </nav>
 
     <nav class="sub">
@@ -49,33 +49,21 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/html5ever/tree_builder/mod.rs.html#10-1710' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../../src/html5ever/tree_builder/mod.rs.html#10-429' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>The HTML5 tree builder.</p>
 </div><h2 id='reexports' class='section-header'><a href="#reexports">Re-exports</a></h2>
-<table><tr><td><code>pub use interface::<a class="enum" href="../../html5ever/tree_builder/enum.QuirksMode.html" title="enum html5ever::tree_builder::QuirksMode">Quirks</a>;</code></td></tr><tr><td><code>pub use interface::<a class="enum" href="../../html5ever/tree_builder/enum.QuirksMode.html" title="enum html5ever::tree_builder::QuirksMode">LimitedQuirks</a>;</code></td></tr><tr><td><code>pub use interface::<a class="enum" href="../../html5ever/tree_builder/enum.QuirksMode.html" title="enum html5ever::tree_builder::QuirksMode">NoQuirks</a>;</code></td></tr><tr><td><code>pub use interface::<a class="enum" href="../../html5ever/tree_builder/enum.NodeOrText.html" title="enum html5ever::tree_builder::NodeOrText">AppendNode</a>;</code></td></tr><tr><td><code>pub use interface::<a class="enum" href="../../html5ever/tree_builder/enum.NodeOrText.html" title="enum html5ever::tree_builder::NodeOrText">AppendText</a>;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../../html5ever/tree_builder/enum.PushFlag.html" title="enum html5ever::tree_builder::PushFlag">PushFlag</a>::*;</code></td></tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table><tr><td><code>pub use self::interface::<a class="enum" href="../../html5ever/tree_builder/interface/enum.QuirksMode.html" title="enum html5ever::tree_builder::interface::QuirksMode">QuirksMode</a>;</code></td></tr><tr><td><code>pub use self::interface::<a class="enum" href="../../html5ever/tree_builder/interface/enum.QuirksMode.html" title="enum html5ever::tree_builder::interface::QuirksMode">Quirks</a>;</code></td></tr><tr><td><code>pub use self::interface::<a class="enum" href="../../html5ever/tree_builder/interface/enum.QuirksMode.html" title="enum html5ever::tree_builder::interface::QuirksMode">LimitedQuirks</a>;</code></td></tr><tr><td><code>pub use self::interface::<a class="enum" href="../../html5ever/tree_builder/interface/enum.QuirksMode.html" title="enum html5ever::tree_builder::interface::QuirksMode">NoQuirks</a>;</code></td></tr><tr><td><code>pub use self::interface::<a class="enum" href="../../html5ever/tree_builder/interface/enum.NodeOrText.html" title="enum html5ever::tree_builder::interface::NodeOrText">NodeOrText</a>;</code></td></tr><tr><td><code>pub use self::interface::<a class="enum" href="../../html5ever/tree_builder/interface/enum.NodeOrText.html" title="enum html5ever::tree_builder::interface::NodeOrText">AppendNode</a>;</code></td></tr><tr><td><code>pub use self::interface::<a class="enum" href="../../html5ever/tree_builder/interface/enum.NodeOrText.html" title="enum html5ever::tree_builder::interface::NodeOrText">AppendText</a>;</code></td></tr><tr><td><code>pub use self::interface::<a class="trait" href="../../html5ever/tree_builder/interface/trait.TreeSink.html" title="trait html5ever::tree_builder::interface::TreeSink">TreeSink</a>;</code></td></tr><tr><td><code>pub use self::interface::<a class="trait" href="../../html5ever/tree_builder/interface/trait.Tracer.html" title="trait html5ever::tree_builder::interface::Tracer">Tracer</a>;</code></td></tr><tr><td><code>pub use self::interface::<a class="enum" href="../../html5ever/tree_builder/interface/enum.NextParserState.html" title="enum html5ever::tree_builder::interface::NextParserState">NextParserState</a>;</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class="struct" href="struct.ActiveFormattingIter.html"
-                                  title='struct html5ever::tree_builder::ActiveFormattingIter'>ActiveFormattingIter</a></td>
+                           <td><a class="mod" href="interface/index.html"
+                                  title='mod html5ever::tree_builder::interface'>interface</a></td>
                            <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.Attribute.html"
-                                  title='struct html5ever::tree_builder::Attribute'>Attribute</a></td>
-                           <td class='docblock-short'>
-                                <p>A tag attribute.</p>
+                                <p>The interface for consumers of the tree builder (and thus the
+parser overall).</p>
 
                            </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.ElementFlags.html"
-                                  title='struct html5ever::tree_builder::ElementFlags'>ElementFlags</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
+                       </tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table>
                        <tr class=' module-item'>
                            <td><a class="struct" href="struct.TreeBuilder.html"
                                   title='struct html5ever::tree_builder::TreeBuilder'>TreeBuilder</a></td>
@@ -90,71 +78,6 @@
                            <td class='docblock-short'>
                                 <p>Tree builder options, with an impl for Default.</p>
 
-                           </td>
-                       </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
-<table>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.NextParserState.html"
-                                  title='enum html5ever::tree_builder::NextParserState'>NextParserState</a></td>
-                           <td class='docblock-short'>
-                                <p>Whether to interrupt further parsing of the current input until
-the next explicit resumption of the tokenizer, or continue without
-any interruption.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.NodeOrText.html"
-                                  title='enum html5ever::tree_builder::NodeOrText'>NodeOrText</a></td>
-                           <td class='docblock-short'>
-                                <p>Something which can be inserted into the DOM.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.PushFlag.html"
-                                  title='enum html5ever::tree_builder::PushFlag'>PushFlag</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.QuirksMode.html"
-                                  title='enum html5ever::tree_builder::QuirksMode'>QuirksMode</a></td>
-                           <td class='docblock-short'>
-                                <p>A document's quirks mode.</p>
-
-                           </td>
-                       </tr></table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
-<table>
-                       <tr class=' module-item'>
-                           <td><a class="trait" href="trait.Tracer.html"
-                                  title='trait html5ever::tree_builder::Tracer'>Tracer</a></td>
-                           <td class='docblock-short'>
-                                <p>Trace hooks for a garbage-collected DOM.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="trait" href="trait.TreeSink.html"
-                                  title='trait html5ever::tree_builder::TreeSink'>TreeSink</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
-<table>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.create_element.html"
-                                  title='fn html5ever::tree_builder::create_element'>create_element</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.html_elem.html"
-                                  title='fn html5ever::tree_builder::html_elem'>html_elem</a></td>
-                           <td class='docblock-short'>
-                                
                            </td>
                        </tr></table></section>
     <section id='search' class="content hidden"></section>

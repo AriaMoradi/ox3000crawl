@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/root/.cargo/registry/src/github.com-1ecc6299db9ec823/tendril-0.4.0/src/tendril.rs`.">
+    <meta name="description" content="Source to the Rust file `/root/.cargo/registry/src/github.com-1ecc6299db9ec823/tendril-0.2.4/src/tendril.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>tendril.rs.html -- source</title>
@@ -2293,8 +2293,6 @@
 <span id="2247">2247</span>
 <span id="2248">2248</span>
 <span id="2249">2249</span>
-<span id="2250">2250</span>
-<span id="2251">2251</span>
 </pre><pre class="rust ">
 <span class="comment">// Licensed under the Apache License, Version 2.0 &lt;LICENSE-APACHE or</span>
 <span class="comment">// http://www.apache.org/licenses/LICENSE-2.0&gt; or the MIT license</span>
@@ -2302,10 +2300,10 @@
 <span class="comment">// option. This file may not be copied, modified, or distributed</span>
 <span class="comment">// except according to those terms.</span>
 
-<span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">ptr</span>, <span class="ident">mem</span>, <span class="ident">hash</span>, <span class="ident">str</span>, <span class="ident">u32</span>, <span class="ident">io</span>, <span class="ident">slice</span>};
+<span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">ptr</span>, <span class="ident">mem</span>, <span class="ident">hash</span>, <span class="ident">str</span>, <span class="ident">u32</span>, <span class="ident">io</span>, <span class="ident">slice</span>, <span class="ident">cmp</span>};
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">atomic</span>::{<span class="self">self</span>, <span class="ident">AtomicUsize</span>};
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">atomic</span>::<span class="ident">Ordering</span> <span class="kw">as</span> <span class="ident">AtomicOrdering</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">borrow</span>::<span class="ident">Borrow</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">borrow</span>::{<span class="ident">Borrow</span>, <span class="ident">Cow</span>};
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">marker</span>::<span class="ident">PhantomData</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">cell</span>::<span class="ident">Cell</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ops</span>::{<span class="ident">Deref</span>, <span class="ident">DerefMut</span>};
@@ -2315,14 +2313,13 @@
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">cmp</span>::<span class="ident">Ordering</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span> <span class="kw">as</span> <span class="ident">strfmt</span>;
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;encoding&quot;</span>)]</span> <span class="kw">use</span> <span class="ident">encoding</span>::{<span class="self">self</span>, <span class="ident">EncodingRef</span>, <span class="ident">DecoderTrap</span>, <span class="ident">EncoderTrap</span>};
-
+<span class="kw">use</span> <span class="ident">encoding</span>::{<span class="self">self</span>, <span class="ident">EncodingRef</span>, <span class="ident">DecoderTrap</span>, <span class="ident">EncoderTrap</span>};
 
 <span class="kw">use</span> <span class="ident">buf32</span>::{<span class="self">self</span>, <span class="ident">Buf32</span>};
 <span class="kw">use</span> <span class="ident">fmt</span>::{<span class="self">self</span>, <span class="ident">Slice</span>};
 <span class="kw">use</span> <span class="ident">fmt</span>::<span class="ident">imp</span>::<span class="ident">Fixup</span>;
 <span class="kw">use</span> <span class="ident">util</span>::{<span class="ident">unsafe_slice</span>, <span class="ident">unsafe_slice_mut</span>, <span class="ident">copy_and_advance</span>, <span class="ident">copy_lifetime_mut</span>, <span class="ident">copy_lifetime</span>,
-           <span class="ident">NonZeroUsize</span>};
+           <span class="ident">NonZero</span>};
 <span class="kw">use</span> <span class="ident">OFLOW</span>;
 
 <span class="kw">const</span> <span class="ident">MAX_INLINE_LEN</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">8</span>;
@@ -2330,10 +2327,10 @@
 <span class="kw">const</span> <span class="ident">EMPTY_TAG</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">0xF</span>;
 
 <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-<span class="kw">fn</span> <span class="ident">inline_tag</span>(<span class="ident">len</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="ident">NonZeroUsize</span> {
+<span class="kw">fn</span> <span class="ident">inline_tag</span>(<span class="ident">len</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="ident">NonZero</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
     <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">len</span> <span class="op">&lt;=</span> <span class="ident">MAX_INLINE_LEN</span> <span class="kw">as</span> <span class="ident">u32</span>);
     <span class="kw">unsafe</span> {
-        <span class="ident">NonZeroUsize</span>::<span class="ident">new</span>(<span class="kw">if</span> <span class="ident">len</span> <span class="op">==</span> <span class="number">0</span> {
+        <span class="ident">NonZero</span>::<span class="ident">new</span>(<span class="kw">if</span> <span class="ident">len</span> <span class="op">==</span> <span class="number">0</span> {
             <span class="ident">EMPTY_TAG</span>
         } <span class="kw">else</span> {
             <span class="ident">len</span> <span class="kw">as</span> <span class="ident">usize</span>
@@ -2345,7 +2342,7 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// Exactly two types implement this trait:</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// - `Atomic`: use this in your tendril and you will have a `Send` tendril which works</span>
+<span class="doccomment">/// - `Atomic`: use this in your tendril and you will have a `Send + Sync` tendril which works</span>
 <span class="doccomment">///   across threads; this is akin to `Arc`.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// - `NonAtomic`: use this in your tendril and you will have a tendril which is neither</span>
@@ -2402,8 +2399,8 @@
 
 <span class="doccomment">/// A marker of an atomic (and hence concurrent) tendril.</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// This is used as the second, optional type parameter of a `Tendril`;</span>
-<span class="doccomment">/// `Tendril&lt;F, Atomic&gt;` thus implements`Send`.</span>
+<span class="doccomment">/// This is used as the second, optional type parameter of a `Tendril`; `Tendril&lt;F, Atomic&gt;` thus</span>
+<span class="doccomment">/// implements both `Send` and `Sync`.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// This is akin to using `Arc` for reference counting.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Atomic</span>(<span class="ident">AtomicUsize</span>);
@@ -2480,16 +2477,16 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// The type parameter `A` indicates the atomicity of the tendril; it is by</span>
 <span class="doccomment">/// default `NonAtomic`, but can be specified as `Atomic` to get a tendril</span>
-<span class="doccomment">/// which implements `Send` (viz. a thread-safe tendril).</span>
+<span class="doccomment">/// which implements `Send` and `Sync` (viz. a thread-safe tendril).</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// The maximum length of a `Tendril` is 4 GB. The library will panic if</span>
 <span class="doccomment">/// you attempt to go over the limit.</span>
-<span class="attribute">#[<span class="ident">repr</span>(<span class="ident">C</span>)]</span>
+<span class="attribute">#[<span class="ident">repr</span>(<span class="ident">packed</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Tendril</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">A</span> <span class="op">=</span> <span class="ident">NonAtomic</span><span class="op">&gt;</span>
     <span class="kw">where</span> <span class="ident">F</span>: <span class="ident">fmt</span>::<span class="ident">Format</span>,
           <span class="ident">A</span>: <span class="ident">Atomicity</span>,
 {
-    <span class="ident">ptr</span>: <span class="ident">Cell</span><span class="op">&lt;</span><span class="ident">NonZeroUsize</span><span class="op">&gt;</span>,
+    <span class="ident">ptr</span>: <span class="ident">Cell</span><span class="op">&lt;</span><span class="ident">NonZero</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;&gt;</span>,
     <span class="ident">len</span>: <span class="ident">u32</span>,
     <span class="ident">aux</span>: <span class="ident">Cell</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>,
     <span class="ident">marker</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">F</span><span class="op">&gt;</span>,
@@ -2497,6 +2494,7 @@
 }
 
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">A</span><span class="op">&gt;</span> <span class="ident">Send</span> <span class="kw">for</span> <span class="ident">Tendril</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">A</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="ident">F</span>: <span class="ident">fmt</span>::<span class="ident">Format</span>, <span class="ident">A</span>: <span class="ident">Atomicity</span> <span class="op">+</span> <span class="ident">Sync</span> { }
+<span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">A</span><span class="op">&gt;</span> <span class="ident">Sync</span> <span class="kw">for</span> <span class="ident">Tendril</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">A</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="ident">F</span>: <span class="ident">fmt</span>::<span class="ident">Format</span>, <span class="ident">A</span>: <span class="ident">Atomicity</span> <span class="op">+</span> <span class="ident">Sync</span> { }
 
 <span class="doccomment">/// `Tendril` for storing native Rust strings.</span>
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">StrTendril</span> <span class="op">=</span> <span class="ident">Tendril</span><span class="op">&lt;</span><span class="ident">fmt</span>::<span class="ident">UTF8</span><span class="op">&gt;</span>;
@@ -2883,7 +2881,7 @@
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">clear</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">ptr</span>.<span class="ident">get</span>().<span class="ident">get</span>() <span class="op">&lt;=</span> <span class="ident">MAX_INLINE_TAG</span> {
-            <span class="self">self</span>.<span class="ident">ptr</span>.<span class="ident">set</span>(<span class="kw">unsafe</span> { <span class="ident">NonZeroUsize</span>::<span class="ident">new</span>(<span class="ident">EMPTY_TAG</span>) });
+            <span class="self">self</span>.<span class="ident">ptr</span>.<span class="ident">set</span>(<span class="kw">unsafe</span> { <span class="ident">NonZero</span>::<span class="ident">new</span>(<span class="ident">EMPTY_TAG</span>) });
         } <span class="kw">else</span> {
             <span class="kw">let</span> (_, <span class="ident">shared</span>, _) <span class="op">=</span> <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="ident">assume_buf</span>() };
             <span class="kw">if</span> <span class="ident">shared</span> {
@@ -3263,7 +3261,7 @@
             <span class="kw">let</span> <span class="ident">header</span> <span class="op">=</span> <span class="ident">p</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">Header</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span>;
             (<span class="kw-2">*</span><span class="ident">header</span>).<span class="ident">cap</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">aux</span>.<span class="ident">get</span>();
 
-            <span class="self">self</span>.<span class="ident">ptr</span>.<span class="ident">set</span>(<span class="ident">NonZeroUsize</span>::<span class="ident">new</span>(<span class="ident">p</span> <span class="op">|</span> <span class="number">1</span>));
+            <span class="self">self</span>.<span class="ident">ptr</span>.<span class="ident">set</span>(<span class="ident">NonZero</span>::<span class="ident">new</span>(<span class="ident">p</span> <span class="op">|</span> <span class="number">1</span>));
             <span class="self">self</span>.<span class="ident">aux</span>.<span class="ident">set</span>(<span class="number">0</span>);
         }
     }
@@ -3286,7 +3284,7 @@
         <span class="self">self</span>.<span class="ident">make_owned</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">assume_buf</span>().<span class="number">0</span>;
         <span class="ident">buf</span>.<span class="ident">grow</span>(<span class="ident">cap</span>);
-        <span class="self">self</span>.<span class="ident">ptr</span>.<span class="ident">set</span>(<span class="ident">NonZeroUsize</span>::<span class="ident">new</span>(<span class="ident">buf</span>.<span class="ident">ptr</span> <span class="kw">as</span> <span class="ident">usize</span>));
+        <span class="self">self</span>.<span class="ident">ptr</span>.<span class="ident">set</span>(<span class="ident">NonZero</span>::<span class="ident">new</span>(<span class="ident">buf</span>.<span class="ident">ptr</span> <span class="kw">as</span> <span class="ident">usize</span>));
         <span class="self">self</span>.<span class="ident">aux</span>.<span class="ident">set</span>(<span class="ident">buf</span>.<span class="ident">cap</span>);
     }
 
@@ -3329,7 +3327,7 @@
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">owned</span>(<span class="ident">x</span>: <span class="ident">Buf32</span><span class="op">&lt;</span><span class="ident">Header</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;&gt;</span>) <span class="op">-&gt;</span> <span class="ident">Tendril</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">A</span><span class="op">&gt;</span> {
         <span class="ident">Tendril</span> {
-            <span class="ident">ptr</span>: <span class="ident">Cell</span>::<span class="ident">new</span>(<span class="ident">NonZeroUsize</span>::<span class="ident">new</span>(<span class="ident">x</span>.<span class="ident">ptr</span> <span class="kw">as</span> <span class="ident">usize</span>)),
+            <span class="ident">ptr</span>: <span class="ident">Cell</span>::<span class="ident">new</span>(<span class="ident">NonZero</span>::<span class="ident">new</span>(<span class="ident">x</span>.<span class="ident">ptr</span> <span class="kw">as</span> <span class="ident">usize</span>)),
             <span class="ident">len</span>: <span class="ident">x</span>.<span class="ident">len</span>,
             <span class="ident">aux</span>: <span class="ident">Cell</span>::<span class="ident">new</span>(<span class="ident">x</span>.<span class="ident">cap</span>),
             <span class="ident">marker</span>: <span class="ident">PhantomData</span>,
@@ -3349,7 +3347,7 @@
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">shared</span>(<span class="ident">buf</span>: <span class="ident">Buf32</span><span class="op">&lt;</span><span class="ident">Header</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;&gt;</span>, <span class="ident">off</span>: <span class="ident">u32</span>, <span class="ident">len</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="ident">Tendril</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">A</span><span class="op">&gt;</span> {
         <span class="ident">Tendril</span> {
-            <span class="ident">ptr</span>: <span class="ident">Cell</span>::<span class="ident">new</span>(<span class="ident">NonZeroUsize</span>::<span class="ident">new</span>((<span class="ident">buf</span>.<span class="ident">ptr</span> <span class="kw">as</span> <span class="ident">usize</span>) <span class="op">|</span> <span class="number">1</span>)),
+            <span class="ident">ptr</span>: <span class="ident">Cell</span>::<span class="ident">new</span>(<span class="ident">NonZero</span>::<span class="ident">new</span>((<span class="ident">buf</span>.<span class="ident">ptr</span> <span class="kw">as</span> <span class="ident">usize</span>) <span class="op">|</span> <span class="number">1</span>)),
             <span class="ident">len</span>: <span class="ident">len</span>,
             <span class="ident">aux</span>: <span class="ident">Cell</span>::<span class="ident">new</span>(<span class="ident">off</span>),
             <span class="ident">marker</span>: <span class="ident">PhantomData</span>,
@@ -3425,7 +3423,6 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// A `SendTendril` may be produced by `Tendril.into_send()` or `SendTendril::from(tendril)`,</span>
 <span class="doccomment">/// and may be returned to a `Tendril` by `Tendril::from(self)`.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SendTendril</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>
     <span class="kw">where</span> <span class="ident">F</span>: <span class="ident">fmt</span>::<span class="ident">Format</span>,
 {
@@ -3633,7 +3630,6 @@
     }
 }
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;encoding&quot;</span>)]</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span> <span class="ident">encoding</span>::<span class="ident">ByteWriter</span> <span class="kw">for</span> <span class="ident">Tendril</span><span class="op">&lt;</span><span class="ident">fmt</span>::<span class="ident">Bytes</span>, <span class="ident">A</span><span class="op">&gt;</span>
     <span class="kw">where</span> <span class="ident">A</span>: <span class="ident">Atomicity</span>,
 {
@@ -3649,7 +3645,7 @@
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">fn</span> <span class="ident">writer_hint</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">additional</span>: <span class="ident">usize</span>) {
-        <span class="self">self</span>.<span class="ident">reserve</span>(::<span class="ident">std</span>::<span class="ident">cmp</span>::<span class="ident">min</span>(<span class="ident">u32</span>::<span class="ident">MAX</span> <span class="kw">as</span> <span class="ident">usize</span>, <span class="ident">additional</span>) <span class="kw">as</span> <span class="ident">u32</span>);
+        <span class="self">self</span>.<span class="ident">reserve</span>(<span class="ident">cmp</span>::<span class="ident">min</span>(<span class="ident">u32</span>::<span class="ident">MAX</span> <span class="kw">as</span> <span class="ident">usize</span>, <span class="ident">additional</span>) <span class="kw">as</span> <span class="ident">u32</span>);
     }
 }
 
@@ -3662,9 +3658,8 @@
     <span class="doccomment">/// See the [rust-encoding docs](https://lifthrasiir.github.io/rust-encoding/encoding/)</span>
     <span class="doccomment">/// for more information.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;encoding&quot;</span>)]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">decode</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">encoding</span>: <span class="ident">EncodingRef</span>, <span class="ident">trap</span>: <span class="ident">DecoderTrap</span>)
-        <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Tendril</span><span class="op">&lt;</span><span class="ident">fmt</span>::<span class="ident">UTF8</span>, <span class="ident">A</span><span class="op">&gt;</span>, ::<span class="ident">std</span>::<span class="ident">borrow</span>::<span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;&gt;</span>
+        <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Tendril</span><span class="op">&lt;</span><span class="ident">fmt</span>::<span class="ident">UTF8</span>, <span class="ident">A</span><span class="op">&gt;</span>, <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;&gt;</span>
     {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ret</span> <span class="op">=</span> <span class="ident">Tendril</span>::<span class="ident">new</span>();
         <span class="ident">encoding</span>.<span class="ident">decode_to</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="self">self</span>, <span class="ident">trap</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ret</span>).<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="ident">ret</span>)
@@ -3719,7 +3714,6 @@
     }
 }
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;encoding&quot;</span>)]</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span> <span class="ident">encoding</span>::<span class="ident">StringWriter</span> <span class="kw">for</span> <span class="ident">Tendril</span><span class="op">&lt;</span><span class="ident">fmt</span>::<span class="ident">UTF8</span>, <span class="ident">A</span><span class="op">&gt;</span>
     <span class="kw">where</span> <span class="ident">A</span>: <span class="ident">Atomicity</span>,
 {
@@ -3735,7 +3729,7 @@
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">fn</span> <span class="ident">writer_hint</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">additional</span>: <span class="ident">usize</span>) {
-        <span class="self">self</span>.<span class="ident">reserve</span>(::<span class="ident">std</span>::<span class="ident">cmp</span>::<span class="ident">min</span>(<span class="ident">u32</span>::<span class="ident">MAX</span> <span class="kw">as</span> <span class="ident">usize</span>, <span class="ident">additional</span>) <span class="kw">as</span> <span class="ident">u32</span>);
+        <span class="self">self</span>.<span class="ident">reserve</span>(<span class="ident">cmp</span>::<span class="ident">min</span>(<span class="ident">u32</span>::<span class="ident">MAX</span> <span class="kw">as</span> <span class="ident">usize</span>, <span class="ident">additional</span>) <span class="kw">as</span> <span class="ident">u32</span>);
     }
 }
 
@@ -3747,9 +3741,8 @@
     <span class="doccomment">/// See the [rust-encoding docs](https://lifthrasiir.github.io/rust-encoding/encoding/)</span>
     <span class="doccomment">/// for more information.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;encoding&quot;</span>)]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">encode</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">encoding</span>: <span class="ident">EncodingRef</span>, <span class="ident">trap</span>: <span class="ident">EncoderTrap</span>)
-        <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Tendril</span><span class="op">&lt;</span><span class="ident">fmt</span>::<span class="ident">Bytes</span>, <span class="ident">A</span><span class="op">&gt;</span>, ::<span class="ident">std</span>::<span class="ident">borrow</span>::<span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;&gt;</span>
+        <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Tendril</span><span class="op">&lt;</span><span class="ident">fmt</span>::<span class="ident">Bytes</span>, <span class="ident">A</span><span class="op">&gt;</span>, <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;&gt;</span>
     {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ret</span> <span class="op">=</span> <span class="ident">Tendril</span>::<span class="ident">new</span>();
         <span class="ident">encoding</span>.<span class="ident">encode_to</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="self">self</span>, <span class="ident">trap</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ret</span>).<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="ident">ret</span>)
@@ -3845,7 +3838,7 @@
 }
 
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">test</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;bench&quot;</span>))]</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">test</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;unstable&quot;</span>))]</span>
 <span class="attribute">#[<span class="ident">path</span><span class="op">=</span><span class="string">&quot;bench.rs&quot;</span>]</span>
 <span class="kw">mod</span> <span class="ident">bench</span>;
 
@@ -3858,6 +3851,7 @@
     <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">thread</span>;
 
     <span class="kw">fn</span> <span class="ident">assert_send</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Send</span><span class="op">&gt;</span>() { }
+    <span class="kw">fn</span> <span class="ident">assert_sync</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Sync</span><span class="op">&gt;</span>() { }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">smoke_test</span>() {
@@ -3885,6 +3879,9 @@
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">correct</span>, <span class="ident">mem</span>::<span class="ident">size_of</span>::<span class="op">&lt;</span><span class="ident">ByteTendril</span><span class="op">&gt;</span>());
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">correct</span>, <span class="ident">mem</span>::<span class="ident">size_of</span>::<span class="op">&lt;</span><span class="ident">StrTendril</span><span class="op">&gt;</span>());
 
+        <span class="comment">// Check that the NonZero&lt;T&gt; optimization is working, if on unstable Rust.</span>
+        <span class="kw">let</span> <span class="ident">option_tag</span> <span class="op">=</span> <span class="kw">if</span> <span class="macro">cfg</span><span class="macro">!</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;unstable&quot;</span>) { <span class="number">0</span> } <span class="kw">else</span> { <span class="number">1</span> };
+        <span class="kw">let</span> <span class="ident">correct</span> <span class="op">=</span> <span class="ident">correct</span> <span class="op">+</span> <span class="ident">option_tag</span>;
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">correct</span>, <span class="ident">mem</span>::<span class="ident">size_of</span>::<span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ByteTendril</span><span class="op">&gt;&gt;</span>());
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">correct</span>, <span class="ident">mem</span>::<span class="ident">size_of</span>::<span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">StrTendril</span><span class="op">&gt;&gt;</span>());
 
@@ -4202,7 +4199,6 @@
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;encoding&quot;</span>)]</span>
     <span class="kw">fn</span> <span class="ident">encode</span>() {
         <span class="kw">use</span> <span class="ident">encoding</span>::{<span class="ident">all</span>, <span class="ident">EncoderTrap</span>};
 
@@ -4220,7 +4216,6 @@
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;encoding&quot;</span>)]</span>
     <span class="kw">fn</span> <span class="ident">decode</span>() {
         <span class="kw">use</span> <span class="ident">encoding</span>::{<span class="ident">all</span>, <span class="ident">DecoderTrap</span>};
 
@@ -4504,6 +4499,7 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">atomic</span>() {
         <span class="ident">assert_send</span>::<span class="op">&lt;</span><span class="ident">Tendril</span><span class="op">&lt;</span><span class="ident">fmt</span>::<span class="ident">UTF8</span>, <span class="ident">Atomic</span><span class="op">&gt;&gt;</span>();
+        <span class="ident">assert_sync</span>::<span class="op">&lt;</span><span class="ident">Tendril</span><span class="op">&lt;</span><span class="ident">fmt</span>::<span class="ident">UTF8</span>, <span class="ident">Atomic</span><span class="op">&gt;&gt;</span>();
         <span class="kw">let</span> <span class="ident">s</span>: <span class="ident">Tendril</span><span class="op">&lt;</span><span class="ident">fmt</span>::<span class="ident">UTF8</span>, <span class="ident">Atomic</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Tendril</span>::<span class="ident">from_slice</span>(<span class="string">&quot;this is a string&quot;</span>);
         <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">s</span>.<span class="ident">is_shared</span>());
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">clone</span>();

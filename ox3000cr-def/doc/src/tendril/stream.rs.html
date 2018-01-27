@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/root/.cargo/registry/src/github.com-1ecc6299db9ec823/tendril-0.4.0/src/stream.rs`.">
+    <meta name="description" content="Source to the Rust file `/root/.cargo/registry/src/github.com-1ecc6299db9ec823/tendril-0.2.4/src/stream.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>stream.rs.html -- source</title>
@@ -509,63 +509,6 @@
 <span id="463">463</span>
 <span id="464">464</span>
 <span id="465">465</span>
-<span id="466">466</span>
-<span id="467">467</span>
-<span id="468">468</span>
-<span id="469">469</span>
-<span id="470">470</span>
-<span id="471">471</span>
-<span id="472">472</span>
-<span id="473">473</span>
-<span id="474">474</span>
-<span id="475">475</span>
-<span id="476">476</span>
-<span id="477">477</span>
-<span id="478">478</span>
-<span id="479">479</span>
-<span id="480">480</span>
-<span id="481">481</span>
-<span id="482">482</span>
-<span id="483">483</span>
-<span id="484">484</span>
-<span id="485">485</span>
-<span id="486">486</span>
-<span id="487">487</span>
-<span id="488">488</span>
-<span id="489">489</span>
-<span id="490">490</span>
-<span id="491">491</span>
-<span id="492">492</span>
-<span id="493">493</span>
-<span id="494">494</span>
-<span id="495">495</span>
-<span id="496">496</span>
-<span id="497">497</span>
-<span id="498">498</span>
-<span id="499">499</span>
-<span id="500">500</span>
-<span id="501">501</span>
-<span id="502">502</span>
-<span id="503">503</span>
-<span id="504">504</span>
-<span id="505">505</span>
-<span id="506">506</span>
-<span id="507">507</span>
-<span id="508">508</span>
-<span id="509">509</span>
-<span id="510">510</span>
-<span id="511">511</span>
-<span id="512">512</span>
-<span id="513">513</span>
-<span id="514">514</span>
-<span id="515">515</span>
-<span id="516">516</span>
-<span id="517">517</span>
-<span id="518">518</span>
-<span id="519">519</span>
-<span id="520">520</span>
-<span id="521">521</span>
-<span id="522">522</span>
 </pre><pre class="rust ">
 <span class="comment">// Licensed under the Apache License, Version 2.0 &lt;LICENSE-APACHE or</span>
 <span class="comment">// http://www.apache.org/licenses/LICENSE-2.0&gt; or the MIT license</span>
@@ -584,7 +527,7 @@
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">marker</span>::<span class="ident">PhantomData</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">path</span>::<span class="ident">Path</span>;
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;encoding&quot;</span>)]</span> <span class="kw">use</span> <span class="ident">encoding</span>::{<span class="ident">EncodingRef</span>, <span class="ident">RawDecoder</span>};
+<span class="kw">use</span> <span class="ident">encoding</span>::{<span class="ident">EncodingRef</span>, <span class="ident">RawDecoder</span>};
 <span class="kw">use</span> <span class="ident">utf8</span>;
 
 <span class="doccomment">/// Trait for types that can process a tendril.</span>
@@ -674,8 +617,8 @@
     <span class="kw">where</span> <span class="ident">Sink</span>: <span class="ident">TendrilSink</span><span class="op">&lt;</span><span class="ident">fmt</span>::<span class="ident">UTF8</span>, <span class="ident">A</span><span class="op">&gt;</span>,
           <span class="ident">A</span>: <span class="ident">Atomicity</span>
 {
+    <span class="ident">decoder</span>: <span class="ident">utf8</span>::<span class="ident">Decoder</span>,
     <span class="kw">pub</span> <span class="ident">inner_sink</span>: <span class="ident">Sink</span>,
-    <span class="ident">incomplete</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">utf8</span>::<span class="ident">Incomplete</span><span class="op">&gt;</span>,
     <span class="ident">marker</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span>,
 }
 
@@ -687,8 +630,8 @@
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">inner_sink</span>: <span class="ident">Sink</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
         <span class="ident">Utf8LossyDecoder</span> {
+            <span class="ident">decoder</span>: <span class="ident">utf8</span>::<span class="ident">Decoder</span>::<span class="ident">new</span>(),
             <span class="ident">inner_sink</span>: <span class="ident">inner_sink</span>,
-            <span class="ident">incomplete</span>: <span class="prelude-val">None</span>,
             <span class="ident">marker</span>: <span class="ident">PhantomData</span>,
         }
     }
@@ -699,74 +642,28 @@
           <span class="ident">A</span>: <span class="ident">Atomicity</span>,
 {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">process</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">t</span>: <span class="ident">Tendril</span><span class="op">&lt;</span><span class="ident">fmt</span>::<span class="ident">Bytes</span>, <span class="ident">A</span><span class="op">&gt;</span>) {
-        <span class="comment">// FIXME: remove take() and map() when non-lexical borrows are stable.</span>
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">mut</span> <span class="ident">incomplete</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">incomplete</span>.<span class="ident">take</span>() {
-            <span class="kw">let</span> <span class="ident">resume_at</span> <span class="op">=</span> <span class="ident">incomplete</span>.<span class="ident">try_complete</span>(<span class="kw-2">&amp;</span><span class="ident">t</span>).<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">result</span>, <span class="ident">rest</span>)<span class="op">|</span> {
-                <span class="kw">match</span> <span class="ident">result</span> {
-                    <span class="prelude-val">Ok</span>(<span class="ident">s</span>) <span class="op">=&gt;</span> {
-                        <span class="self">self</span>.<span class="ident">inner_sink</span>.<span class="ident">process</span>(<span class="ident">Tendril</span>::<span class="ident">from_slice</span>(<span class="ident">s</span>))
-                    }
-                    <span class="prelude-val">Err</span>(_) <span class="op">=&gt;</span> {
-                        <span class="self">self</span>.<span class="ident">inner_sink</span>.<span class="ident">error</span>(<span class="string">&quot;invalid byte sequence&quot;</span>.<span class="ident">into</span>());
-                        <span class="self">self</span>.<span class="ident">inner_sink</span>.<span class="ident">process</span>(<span class="ident">Tendril</span>::<span class="ident">from_slice</span>(<span class="ident">utf8</span>::<span class="ident">REPLACEMENT_CHARACTER</span>));
-                    }
-                }
-                <span class="ident">t</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="ident">rest</span>.<span class="ident">len</span>()
-            });
-            <span class="kw">match</span> <span class="ident">resume_at</span> {
-                <span class="prelude-val">None</span> <span class="op">=&gt;</span> {
-                    <span class="self">self</span>.<span class="ident">incomplete</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">incomplete</span>);
-                    <span class="kw">return</span>
-                }
-                <span class="prelude-val">Some</span>(<span class="ident">resume_at</span>) <span class="op">=&gt;</span> {
-                    <span class="ident">t</span>.<span class="ident">pop_front</span>(<span class="ident">resume_at</span> <span class="kw">as</span> <span class="ident">u32</span>)
+    <span class="kw">fn</span> <span class="ident">process</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">t</span>: <span class="ident">Tendril</span><span class="op">&lt;</span><span class="ident">fmt</span>::<span class="ident">Bytes</span>, <span class="ident">A</span><span class="op">&gt;</span>) {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">input</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">t</span>;
+        <span class="kw">loop</span> {
+            <span class="kw">let</span> (<span class="ident">ch</span>, <span class="ident">s</span>, <span class="ident">result</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">decoder</span>.<span class="ident">decode</span>(<span class="ident">input</span>);
+            <span class="kw">if</span> <span class="op">!</span><span class="ident">ch</span>.<span class="ident">is_empty</span>() {
+                <span class="self">self</span>.<span class="ident">inner_sink</span>.<span class="ident">process</span>(<span class="ident">Tendril</span>::<span class="ident">from_slice</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">ch</span>));
+            }
+            <span class="kw">if</span> <span class="op">!</span><span class="ident">s</span>.<span class="ident">is_empty</span>() {
+                <span class="comment">// rust-utf8 promises that `s` is a subslice of `&amp;*t`</span>
+                <span class="comment">// so this substraction won’t underflow and `subtendril()` won’t panic.</span>
+                <span class="kw">let</span> <span class="ident">offset</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="ident">usize</span> <span class="op">-</span> <span class="ident">t</span>.<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="ident">usize</span>;
+                <span class="kw">let</span> <span class="ident">subtendril</span> <span class="op">=</span> <span class="ident">t</span>.<span class="ident">subtendril</span>(<span class="ident">offset</span> <span class="kw">as</span> <span class="ident">u32</span>, <span class="ident">s</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span>);
+                <span class="kw">unsafe</span> {
+                    <span class="self">self</span>.<span class="ident">inner_sink</span>.<span class="ident">process</span>(<span class="ident">subtendril</span>.<span class="ident">reinterpret_without_validating</span>());
                 }
             }
-        }
-        <span class="kw">while</span> <span class="op">!</span><span class="ident">t</span>.<span class="ident">is_empty</span>() {
-            <span class="kw">let</span> <span class="ident">unborrowed_result</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">utf8</span>::<span class="ident">decode</span>(<span class="kw-2">&amp;</span><span class="ident">t</span>) {
-                <span class="prelude-val">Ok</span>(<span class="ident">s</span>) <span class="op">=&gt;</span> {
-                    <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">s</span>.<span class="ident">as_ptr</span>() <span class="op">==</span> <span class="ident">t</span>.<span class="ident">as_ptr</span>());
-                    <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">s</span>.<span class="ident">len</span>() <span class="op">==</span> <span class="ident">t</span>.<span class="ident">len</span>());
-                    <span class="prelude-val">Ok</span>(())
-                }
-                <span class="prelude-val">Err</span>(<span class="ident">utf8</span>::<span class="ident">DecodeError</span>::<span class="ident">Invalid</span> { <span class="ident">valid_prefix</span>, <span class="ident">invalid_sequence</span>, .. }) <span class="op">=&gt;</span> {
-                    <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">valid_prefix</span>.<span class="ident">as_ptr</span>() <span class="op">==</span> <span class="ident">t</span>.<span class="ident">as_ptr</span>());
-                    <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">valid_prefix</span>.<span class="ident">len</span>() <span class="op">&lt;=</span> <span class="ident">t</span>.<span class="ident">len</span>());
-                    <span class="prelude-val">Err</span>((<span class="ident">valid_prefix</span>.<span class="ident">len</span>(), <span class="prelude-val">Err</span>(<span class="ident">valid_prefix</span>.<span class="ident">len</span>() <span class="op">+</span> <span class="ident">invalid_sequence</span>.<span class="ident">len</span>())))
-                }
-                <span class="prelude-val">Err</span>(<span class="ident">utf8</span>::<span class="ident">DecodeError</span>::<span class="ident">Incomplete</span> { <span class="ident">valid_prefix</span>, <span class="ident">incomplete_suffix</span> }) <span class="op">=&gt;</span> {
-                    <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">valid_prefix</span>.<span class="ident">as_ptr</span>() <span class="op">==</span> <span class="ident">t</span>.<span class="ident">as_ptr</span>());
-                    <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">valid_prefix</span>.<span class="ident">len</span>() <span class="op">&lt;=</span> <span class="ident">t</span>.<span class="ident">len</span>());
-                    <span class="prelude-val">Err</span>((<span class="ident">valid_prefix</span>.<span class="ident">len</span>(), <span class="prelude-val">Ok</span>(<span class="ident">incomplete_suffix</span>)))
-                }
-            };
-            <span class="kw">match</span> <span class="ident">unborrowed_result</span> {
-                <span class="prelude-val">Ok</span>(()) <span class="op">=&gt;</span> {
-                    <span class="kw">unsafe</span> {
-                        <span class="self">self</span>.<span class="ident">inner_sink</span>.<span class="ident">process</span>(<span class="ident">t</span>.<span class="ident">reinterpret_without_validating</span>())
-                    }
-                    <span class="kw">return</span>
-                }
-                <span class="prelude-val">Err</span>((<span class="ident">valid_len</span>, <span class="ident">and_then</span>)) <span class="op">=&gt;</span> {
-                    <span class="kw">if</span> <span class="ident">valid_len</span> <span class="op">&gt;</span> <span class="number">0</span> {
-                        <span class="kw">let</span> <span class="ident">subtendril</span> <span class="op">=</span> <span class="ident">t</span>.<span class="ident">subtendril</span>(<span class="number">0</span>, <span class="ident">valid_len</span> <span class="kw">as</span> <span class="ident">u32</span>);
-                        <span class="kw">unsafe</span> {
-                            <span class="self">self</span>.<span class="ident">inner_sink</span>.<span class="ident">process</span>(<span class="ident">subtendril</span>.<span class="ident">reinterpret_without_validating</span>())
-                        }
-                    }
-                    <span class="kw">match</span> <span class="ident">and_then</span> {
-                        <span class="prelude-val">Ok</span>(<span class="ident">incomplete</span>) <span class="op">=&gt;</span> {
-                            <span class="self">self</span>.<span class="ident">incomplete</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">incomplete</span>);
-                            <span class="kw">return</span>
-                        }
-                        <span class="prelude-val">Err</span>(<span class="ident">offset</span>) <span class="op">=&gt;</span> {
-                            <span class="self">self</span>.<span class="ident">inner_sink</span>.<span class="ident">error</span>(<span class="string">&quot;invalid byte sequence&quot;</span>.<span class="ident">into</span>());
-                            <span class="self">self</span>.<span class="ident">inner_sink</span>.<span class="ident">process</span>(<span class="ident">Tendril</span>::<span class="ident">from_slice</span>(<span class="ident">utf8</span>::<span class="ident">REPLACEMENT_CHARACTER</span>));
-                            <span class="ident">t</span>.<span class="ident">pop_front</span>(<span class="ident">offset</span> <span class="kw">as</span> <span class="ident">u32</span>);
-                        }
-                    }
+            <span class="kw">match</span> <span class="ident">result</span> {
+                <span class="ident">utf8</span>::<span class="prelude-ty">Result</span>::<span class="prelude-val">Ok</span> <span class="op">|</span> <span class="ident">utf8</span>::<span class="prelude-ty">Result</span>::<span class="ident">Incomplete</span> <span class="op">=&gt;</span> <span class="kw">break</span>,
+                <span class="ident">utf8</span>::<span class="prelude-ty">Result</span>::<span class="ident">Error</span> { <span class="ident">remaining_input_after_error</span>: <span class="ident">remaining</span> } <span class="op">=&gt;</span> {
+                    <span class="self">self</span>.<span class="ident">inner_sink</span>.<span class="ident">error</span>(<span class="string">&quot;invalid byte sequence&quot;</span>.<span class="ident">into</span>());
+                    <span class="self">self</span>.<span class="ident">inner_sink</span>.<span class="ident">process</span>(<span class="ident">Tendril</span>::<span class="ident">from_slice</span>(<span class="ident">utf8</span>::<span class="ident">REPLACEMENT_CHARACTER</span>));
+                    <span class="ident">input</span> <span class="op">=</span> <span class="ident">remaining</span>;
                 }
             }
         }
@@ -781,7 +678,7 @@
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">fn</span> <span class="ident">finish</span>(<span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Sink</span>::<span class="ident">Output</span> {
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">incomplete</span>.<span class="ident">is_some</span>() {
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">decoder</span>.<span class="ident">has_incomplete_sequence</span>() {
             <span class="self">self</span>.<span class="ident">inner_sink</span>.<span class="ident">error</span>(<span class="string">&quot;incomplete byte sequence at end of stream&quot;</span>.<span class="ident">into</span>());
             <span class="self">self</span>.<span class="ident">inner_sink</span>.<span class="ident">process</span>(<span class="ident">Tendril</span>::<span class="ident">from_slice</span>(<span class="ident">utf8</span>::<span class="ident">REPLACEMENT_CHARACTER</span>));
         }
@@ -794,14 +691,12 @@
 <span class="doccomment">/// and emits Unicode (`StrTendril`).</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// This allocates new tendrils for encodings other than UTF-8.</span>
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;encoding&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LossyDecoder</span><span class="op">&lt;</span><span class="ident">Sink</span>, <span class="ident">A</span><span class="op">=</span><span class="ident">NonAtomic</span><span class="op">&gt;</span>
     <span class="kw">where</span> <span class="ident">Sink</span>: <span class="ident">TendrilSink</span><span class="op">&lt;</span><span class="ident">fmt</span>::<span class="ident">UTF8</span>, <span class="ident">A</span><span class="op">&gt;</span>,
           <span class="ident">A</span>: <span class="ident">Atomicity</span> {
     <span class="ident">inner</span>: <span class="ident">LossyDecoderInner</span><span class="op">&lt;</span><span class="ident">Sink</span>, <span class="ident">A</span><span class="op">&gt;</span>,
 }
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;encoding&quot;</span>)]</span>
 <span class="kw">enum</span> <span class="ident">LossyDecoderInner</span><span class="op">&lt;</span><span class="ident">Sink</span>, <span class="ident">A</span><span class="op">&gt;</span>
     <span class="kw">where</span> <span class="ident">Sink</span>: <span class="ident">TendrilSink</span><span class="op">&lt;</span><span class="ident">fmt</span>::<span class="ident">UTF8</span>, <span class="ident">A</span><span class="op">&gt;</span>,
           <span class="ident">A</span>: <span class="ident">Atomicity</span> {
@@ -809,7 +704,6 @@
     <span class="ident">Other</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">RawDecoder</span><span class="op">&gt;</span>, <span class="ident">Sink</span>)
 }
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;encoding&quot;</span>)]</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Sink</span>, <span class="ident">A</span><span class="op">&gt;</span> <span class="ident">LossyDecoder</span><span class="op">&lt;</span><span class="ident">Sink</span>, <span class="ident">A</span><span class="op">&gt;</span>
     <span class="kw">where</span> <span class="ident">Sink</span>: <span class="ident">TendrilSink</span><span class="op">&lt;</span><span class="ident">fmt</span>::<span class="ident">UTF8</span>, <span class="ident">A</span><span class="op">&gt;</span>,
           <span class="ident">A</span>: <span class="ident">Atomicity</span>,
@@ -854,7 +748,6 @@
     }
 }
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;encoding&quot;</span>)]</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Sink</span>, <span class="ident">A</span><span class="op">&gt;</span> <span class="ident">TendrilSink</span><span class="op">&lt;</span><span class="ident">fmt</span>::<span class="ident">Bytes</span>, <span class="ident">A</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">LossyDecoder</span><span class="op">&lt;</span><span class="ident">Sink</span>, <span class="ident">A</span><span class="op">&gt;</span>
     <span class="kw">where</span> <span class="ident">Sink</span>: <span class="ident">TendrilSink</span><span class="op">&lt;</span><span class="ident">fmt</span>::<span class="ident">UTF8</span>, <span class="ident">A</span><span class="op">&gt;</span>,
           <span class="ident">A</span>: <span class="ident">Atomicity</span>,
@@ -915,14 +808,12 @@
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">test</span> {
-    <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">TendrilSink</span>, <span class="ident">Utf8LossyDecoder</span>};
-    <span class="kw">use</span> <span class="ident">tendril</span>::{<span class="ident">Tendril</span>, <span class="ident">Atomicity</span>, <span class="ident">NonAtomic</span>};
+    <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">TendrilSink</span>, <span class="ident">LossyDecoder</span>, <span class="ident">Utf8LossyDecoder</span>};
+    <span class="kw">use</span> <span class="ident">tendril</span>::{<span class="ident">Tendril</span>, <span class="ident">Atomicity</span>, <span class="ident">SliceExt</span>, <span class="ident">NonAtomic</span>};
     <span class="kw">use</span> <span class="ident">fmt</span>;
     <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">borrow</span>::<span class="ident">Cow</span>;
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;encoding&quot;</span>)]</span> <span class="kw">use</span> <span class="ident">encoding</span>::<span class="ident">EncodingRef</span>;
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;encoding&quot;</span>)]</span> <span class="kw">use</span> <span class="ident">encoding</span>::<span class="ident">all</span> <span class="kw">as</span> <span class="ident">enc</span>;
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;encoding&quot;</span>)]</span> <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">LossyDecoder</span>;
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;encoding&quot;</span>)]</span> <span class="kw">use</span> <span class="ident">tendril</span>::<span class="ident">SliceExt</span>;
+    <span class="kw">use</span> <span class="ident">encoding</span>::<span class="ident">EncodingRef</span>;
+    <span class="kw">use</span> <span class="ident">encoding</span>::<span class="ident">all</span> <span class="kw">as</span> <span class="ident">enc</span>;
 
     <span class="kw">struct</span> <span class="ident">Accumulate</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span>
         <span class="kw">where</span> <span class="ident">A</span>: <span class="ident">Atomicity</span>,
@@ -975,9 +866,9 @@
         <span class="ident">check_utf8</span>(<span class="kw-2">&amp;</span>[<span class="string">b&quot;x&quot;</span>, <span class="string">b&quot;y&quot;</span>, <span class="string">b&quot;z&quot;</span>], <span class="kw-2">&amp;</span>[<span class="string">&quot;x&quot;</span>, <span class="string">&quot;y&quot;</span>, <span class="string">&quot;z&quot;</span>], <span class="number">0</span>);
 
         <span class="ident">check_utf8</span>(<span class="kw-2">&amp;</span>[<span class="string">b&quot;xy\xEA\x99\xAEzw&quot;</span>], <span class="kw-2">&amp;</span>[<span class="string">&quot;xy\u{a66e}zw&quot;</span>], <span class="number">0</span>);
-        <span class="ident">check_utf8</span>(<span class="kw-2">&amp;</span>[<span class="string">b&quot;xy\xEA&quot;</span>, <span class="string">b&quot;\x99\xAEzw&quot;</span>], <span class="kw-2">&amp;</span>[<span class="string">&quot;xy&quot;</span>, <span class="string">&quot;\u{a66e}z&quot;</span>, <span class="string">&quot;w&quot;</span>], <span class="number">0</span>);
-        <span class="ident">check_utf8</span>(<span class="kw-2">&amp;</span>[<span class="string">b&quot;xy\xEA\x99&quot;</span>, <span class="string">b&quot;\xAEzw&quot;</span>], <span class="kw-2">&amp;</span>[<span class="string">&quot;xy&quot;</span>, <span class="string">&quot;\u{a66e}z&quot;</span>, <span class="string">&quot;w&quot;</span>], <span class="number">0</span>);
-        <span class="ident">check_utf8</span>(<span class="kw-2">&amp;</span>[<span class="string">b&quot;xy\xEA&quot;</span>, <span class="string">b&quot;\x99&quot;</span>, <span class="string">b&quot;\xAEzw&quot;</span>], <span class="kw-2">&amp;</span>[<span class="string">&quot;xy&quot;</span>, <span class="string">&quot;\u{a66e}z&quot;</span>, <span class="string">&quot;w&quot;</span>], <span class="number">0</span>);
+        <span class="ident">check_utf8</span>(<span class="kw-2">&amp;</span>[<span class="string">b&quot;xy\xEA&quot;</span>, <span class="string">b&quot;\x99\xAEzw&quot;</span>], <span class="kw-2">&amp;</span>[<span class="string">&quot;xy&quot;</span>, <span class="string">&quot;\u{a66e}&quot;</span>, <span class="string">&quot;zw&quot;</span>], <span class="number">0</span>);
+        <span class="ident">check_utf8</span>(<span class="kw-2">&amp;</span>[<span class="string">b&quot;xy\xEA\x99&quot;</span>, <span class="string">b&quot;\xAEzw&quot;</span>], <span class="kw-2">&amp;</span>[<span class="string">&quot;xy&quot;</span>, <span class="string">&quot;\u{a66e}&quot;</span>, <span class="string">&quot;zw&quot;</span>], <span class="number">0</span>);
+        <span class="ident">check_utf8</span>(<span class="kw-2">&amp;</span>[<span class="string">b&quot;xy\xEA&quot;</span>, <span class="string">b&quot;\x99&quot;</span>, <span class="string">b&quot;\xAEzw&quot;</span>], <span class="kw-2">&amp;</span>[<span class="string">&quot;xy&quot;</span>, <span class="string">&quot;\u{a66e}&quot;</span>, <span class="string">&quot;zw&quot;</span>], <span class="number">0</span>);
         <span class="ident">check_utf8</span>(<span class="kw-2">&amp;</span>[<span class="string">b&quot;\xEA&quot;</span>, <span class="string">b&quot;&quot;</span>, <span class="string">b&quot;\x99&quot;</span>, <span class="string">b&quot;&quot;</span>, <span class="string">b&quot;\xAE&quot;</span>], <span class="kw-2">&amp;</span>[<span class="string">&quot;\u{a66e}&quot;</span>], <span class="number">0</span>);
         <span class="ident">check_utf8</span>(<span class="kw-2">&amp;</span>[<span class="string">b&quot;&quot;</span>, <span class="string">b&quot;\xEA&quot;</span>, <span class="string">b&quot;&quot;</span>, <span class="string">b&quot;\x99&quot;</span>, <span class="string">b&quot;&quot;</span>, <span class="string">b&quot;\xAE&quot;</span>, <span class="string">b&quot;&quot;</span>], <span class="kw-2">&amp;</span>[<span class="string">&quot;\u{a66e}&quot;</span>], <span class="number">0</span>);
 
@@ -998,7 +889,6 @@
         <span class="ident">check_utf8</span>(<span class="kw-2">&amp;</span>[<span class="string">b&quot;\xEA\x99&quot;</span>], <span class="kw-2">&amp;</span>[<span class="string">&quot;\u{fffd}&quot;</span>], <span class="number">1</span>);
     }
 
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;encoding&quot;</span>)]</span>
     <span class="kw">fn</span> <span class="ident">check_decode</span>(<span class="ident">enc</span>: <span class="ident">EncodingRef</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>[<span class="ident">u8</span>]], <span class="ident">expected</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">errs</span>: <span class="ident">usize</span>) {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">decoder</span> <span class="op">=</span> <span class="ident">LossyDecoder</span>::<span class="ident">new</span>(<span class="ident">enc</span>, <span class="ident">Accumulate</span>::<span class="ident">new</span>());
         <span class="kw">for</span> <span class="ident">x</span> <span class="kw">in</span> <span class="ident">input</span> {
@@ -1014,7 +904,6 @@
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;encoding&quot;</span>)]</span>
     <span class="kw">fn</span> <span class="ident">decode_ascii</span>() {
         <span class="ident">check_decode</span>(<span class="ident">enc</span>::<span class="ident">ASCII</span>, <span class="kw-2">&amp;</span>[], <span class="string">&quot;&quot;</span>, <span class="number">0</span>);
         <span class="ident">check_decode</span>(<span class="ident">enc</span>::<span class="ident">ASCII</span>, <span class="kw-2">&amp;</span>[<span class="string">b&quot;&quot;</span>], <span class="string">&quot;&quot;</span>, <span class="number">0</span>);
@@ -1029,7 +918,6 @@
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;encoding&quot;</span>)]</span>
     <span class="kw">fn</span> <span class="ident">decode_utf8</span>() {
         <span class="ident">check_decode</span>(<span class="ident">enc</span>::<span class="ident">UTF_8</span>, <span class="kw-2">&amp;</span>[], <span class="string">&quot;&quot;</span>, <span class="number">0</span>);
         <span class="ident">check_decode</span>(<span class="ident">enc</span>::<span class="ident">UTF_8</span>, <span class="kw-2">&amp;</span>[<span class="string">b&quot;&quot;</span>], <span class="string">&quot;&quot;</span>, <span class="number">0</span>);
@@ -1055,7 +943,6 @@
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;encoding&quot;</span>)]</span>
     <span class="kw">fn</span> <span class="ident">decode_koi8_u</span>() {
         <span class="ident">check_decode</span>(<span class="ident">enc</span>::<span class="ident">KOI8_U</span>, <span class="kw-2">&amp;</span>[<span class="string">b&quot;\xfc\xce\xc5\xd2\xc7\xc9\xd1&quot;</span>], <span class="string">&quot;Энергия&quot;</span>, <span class="number">0</span>);
         <span class="ident">check_decode</span>(<span class="ident">enc</span>::<span class="ident">KOI8_U</span>, <span class="kw-2">&amp;</span>[<span class="string">b&quot;\xfc\xce&quot;</span>, <span class="string">b&quot;\xc5\xd2\xc7\xc9\xd1&quot;</span>], <span class="string">&quot;Энергия&quot;</span>, <span class="number">0</span>);
@@ -1064,7 +951,6 @@
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;encoding&quot;</span>)]</span>
     <span class="kw">fn</span> <span class="ident">decode_windows_949</span>() {
         <span class="ident">check_decode</span>(<span class="ident">enc</span>::<span class="ident">WINDOWS_949</span>, <span class="kw-2">&amp;</span>[], <span class="string">&quot;&quot;</span>, <span class="number">0</span>);
         <span class="ident">check_decode</span>(<span class="ident">enc</span>::<span class="ident">WINDOWS_949</span>, <span class="kw-2">&amp;</span>[<span class="string">b&quot;&quot;</span>], <span class="string">&quot;&quot;</span>, <span class="number">0</span>);

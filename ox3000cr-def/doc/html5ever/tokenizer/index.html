@@ -49,10 +49,10 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/html5ever/tokenizer/mod.rs.html#10-1565' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../../src/html5ever/tokenizer/mod.rs.html#10-1365' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>The HTML5 tokenizer.</p>
 </div><h2 id='reexports' class='section-header'><a href="#reexports">Re-exports</a></h2>
-<table><tr><td><code>pub use self::interface::<a class="enum" href="../../html5ever/tokenizer/enum.TagKind.html" title="enum html5ever::tokenizer::TagKind">StartTag</a>;</code></td></tr><tr><td><code>pub use self::interface::<a class="enum" href="../../html5ever/tokenizer/enum.TagKind.html" title="enum html5ever::tokenizer::TagKind">EndTag</a>;</code></td></tr><tr><td><code>pub use self::interface::<a class="enum" href="../../html5ever/tokenizer/enum.Token.html" title="enum html5ever::tokenizer::Token">DoctypeToken</a>;</code></td></tr><tr><td><code>pub use self::interface::<a class="enum" href="../../html5ever/tokenizer/enum.Token.html" title="enum html5ever::tokenizer::Token">TagToken</a>;</code></td></tr><tr><td><code>pub use self::interface::<a class="enum" href="../../html5ever/tokenizer/enum.Token.html" title="enum html5ever::tokenizer::Token">CommentToken</a>;</code></td></tr><tr><td><code>pub use self::interface::<a class="enum" href="../../html5ever/tokenizer/enum.Token.html" title="enum html5ever::tokenizer::Token">CharacterTokens</a>;</code></td></tr><tr><td><code>pub use self::interface::<a class="enum" href="../../html5ever/tokenizer/enum.Token.html" title="enum html5ever::tokenizer::Token">NullCharacterToken</a>;</code></td></tr><tr><td><code>pub use self::interface::<a class="enum" href="../../html5ever/tokenizer/enum.Token.html" title="enum html5ever::tokenizer::Token">EOFToken</a>;</code></td></tr><tr><td><code>pub use self::interface::<a class="enum" href="../../html5ever/tokenizer/enum.Token.html" title="enum html5ever::tokenizer::Token">ParseError</a>;</code></td></tr><tr><td><code>pub use buffer_queue::<a class="enum" href="../../html5ever/tokenizer/enum.SetResult.html" title="enum html5ever::tokenizer::SetResult">FromSet</a>;</code></td></tr><tr><td><code>pub use buffer_queue::<a class="enum" href="../../html5ever/tokenizer/enum.SetResult.html" title="enum html5ever::tokenizer::SetResult">NotFromSet</a>;</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
+<table><tr><td><code>pub use self::interface::<a class="enum" href="../../html5ever/tokenizer/enum.TagKind.html" title="enum html5ever::tokenizer::TagKind">StartTag</a>;</code></td></tr><tr><td><code>pub use self::interface::<a class="enum" href="../../html5ever/tokenizer/enum.TagKind.html" title="enum html5ever::tokenizer::TagKind">EndTag</a>;</code></td></tr><tr><td><code>pub use self::interface::<a class="enum" href="../../html5ever/tokenizer/enum.Token.html" title="enum html5ever::tokenizer::Token">DoctypeToken</a>;</code></td></tr><tr><td><code>pub use self::interface::<a class="enum" href="../../html5ever/tokenizer/enum.Token.html" title="enum html5ever::tokenizer::Token">TagToken</a>;</code></td></tr><tr><td><code>pub use self::interface::<a class="enum" href="../../html5ever/tokenizer/enum.Token.html" title="enum html5ever::tokenizer::Token">CommentToken</a>;</code></td></tr><tr><td><code>pub use self::interface::<a class="enum" href="../../html5ever/tokenizer/enum.Token.html" title="enum html5ever::tokenizer::Token">CharacterTokens</a>;</code></td></tr><tr><td><code>pub use self::interface::<a class="enum" href="../../html5ever/tokenizer/enum.Token.html" title="enum html5ever::tokenizer::Token">NullCharacterToken</a>;</code></td></tr><tr><td><code>pub use self::interface::<a class="enum" href="../../html5ever/tokenizer/enum.Token.html" title="enum html5ever::tokenizer::Token">EOFToken</a>;</code></td></tr><tr><td><code>pub use self::interface::<a class="enum" href="../../html5ever/tokenizer/enum.Token.html" title="enum html5ever::tokenizer::Token">ParseError</a>;</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
 <table>
                        <tr class=' module-item'>
                            <td><a class="mod" href="states/index.html"
@@ -64,11 +64,10 @@
                        </tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class="struct" href="struct.BufferQueue.html"
-                                  title='struct html5ever::tokenizer::BufferQueue'>BufferQueue</a></td>
+                           <td><a class="struct" href="struct.Attribute.html"
+                                  title='struct html5ever::tokenizer::Attribute'>Attribute</a></td>
                            <td class='docblock-short'>
-                                <p>A queue of owned string buffers, which supports incrementally
-consuming characters.</p>
+                                <p>A tag attribute.</p>
 
                            </td>
                        </tr>
@@ -106,21 +105,6 @@ consuming characters.</p>
                        </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class="enum" href="enum.ProcessResult.html"
-                                  title='enum html5ever::tokenizer::ProcessResult'>ProcessResult</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.SetResult.html"
-                                  title='enum html5ever::tokenizer::SetResult'>SetResult</a></td>
-                           <td class='docblock-short'>
-                                <p>Result from <code>pop_except_from</code>.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
                            <td><a class="enum" href="enum.TagKind.html"
                                   title='enum html5ever::tokenizer::TagKind'>TagKind</a></td>
                            <td class='docblock-short'>
@@ -130,20 +114,6 @@ consuming characters.</p>
                        <tr class=' module-item'>
                            <td><a class="enum" href="enum.Token.html"
                                   title='enum html5ever::tokenizer::Token'>Token</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.TokenSinkResult.html"
-                                  title='enum html5ever::tokenizer::TokenSinkResult'>TokenSinkResult</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.TokenizerResult.html"
-                                  title='enum html5ever::tokenizer::TokenizerResult'>TokenizerResult</a></td>
                            <td class='docblock-short'>
                                 
                            </td>

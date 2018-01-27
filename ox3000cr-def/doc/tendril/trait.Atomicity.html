@@ -49,12 +49,12 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/tendril/tendril.rs.html#58-70' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../src/tendril/tendril.rs.html#57-69' title='goto source code'>[src]</a></span></h1>
 <pre class='rust trait'>pub unsafe trait Atomicity: 'static { }</pre><div class='docblock'><p>The multithreadedness of a tendril.</p>
 <p>Exactly two types implement this trait:</p>
 <ul>
 <li>
-<p><code>Atomic</code>: use this in your tendril and you will have a <code>Send</code> tendril which works
+<p><code>Atomic</code>: use this in your tendril and you will have a <code>Send + Sync</code> tendril which works
 across threads; this is akin to <code>Arc</code>.</p>
 </li>
 <li>
@@ -69,8 +69,8 @@ for it is used for reference counting.</p>
           Implementors<a href='#implementors' class='anchor'></a>
         </h2>
         <ul class='item-list' id='implementors-list'>
-    <li><div class='out-of-band'><a class='srclink' href='../src/tendril/tendril.rs.html#80-103' title='goto source code'>[src]</a></div><code>impl Atomicity for <a class="struct" href="../tendril/struct.NonAtomic.html" title="struct tendril::NonAtomic">NonAtomic</a></code></li>
-<li><div class='out-of-band'><a class='srclink' href='../src/tendril/tendril.rs.html#113-134' title='goto source code'>[src]</a></div><code>impl Atomicity for <a class="struct" href="../tendril/struct.Atomic.html" title="struct tendril::Atomic">Atomic</a></code></li>
+    <li><div class='out-of-band'><a class='srclink' href='../src/tendril/tendril.rs.html#79-102' title='goto source code'>[src]</a></div><code>impl Atomicity for <a class="struct" href="../tendril/struct.NonAtomic.html" title="struct tendril::NonAtomic">NonAtomic</a></code></li>
+<li><div class='out-of-band'><a class='srclink' href='../src/tendril/tendril.rs.html#112-133' title='goto source code'>[src]</a></div><code>impl Atomicity for <a class="struct" href="../tendril/struct.Atomic.html" title="struct tendril::Atomic">Atomic</a></code></li>
 </ul><script type="text/javascript" async
                          src="../implementors/tendril/trait.Atomicity.js">
                  </script></section>
