@@ -1,17 +1,20 @@
 #![feature(conservative_impl_trait)]
 #![feature(try_trait)]
+#![feature(nll)]
 #![feature(use_nested_groups)]
+#![feature(underscore_lifetimes)]
 
 extern crate futures;
 extern crate hyper;
-extern crate kuchiki;
+extern crate scraper;
 extern crate tokio_core;
 
 // use std::io::{self, Write};
-use futures::{Future, Stream, stream::futures_unordered};
-use hyper::Client;
+use futures::{stream, Future, Stream};
+use hyper::{Client, Uri};
 use tokio_core::reactor::Core;
-use kuchiki::parse_html;
+use scraper::{Html, Selector};
+// use itertools::Itertools;
 
 const ENTRY_GROUPS_URL_PREFIX: &str =
     "http://www.oxfordlearnersdictionaries.com/wordlist/english/oxford3000/Oxford3000_";
@@ -19,7 +22,13 @@ const ENTRY_GROUPS: &[&str] = &[
     "A-B", "C-D", "E-G", "H-K", "L-N", "O-P", "Q-R", "S", "T", "U-Z"
 ];
 
-// fn entrie_uris_from_body(body: Html) -> impl Iterator {}
+fn entrie_uris_from_body(body: Html) -> Vec<String> {
+    let select_word = Selector::parse("[title~=definition]").unwrap();
+    let select = body.select(&select_word);
+    select
+        .map(|m| m.value().attr("href").unwrap().to_string())
+        .collect()
+}
 
 fn entry_uris() {
     let mut core = Core::new().unwrap();
@@ -29,15 +38,22 @@ fn entry_uris() {
         .iter()
         .map(|suffix| ENTRY_GROUPS_URL_PREFIX.to_string() + suffix)
         .map(|uri| uri.parse().unwrap());
-    let work = uris.map(|uri| {
-        client.get(uri).and_then(|res| {
-            println!("Response: {}", res.status());
-            res.body()
-                .concat2()
-                .and_then(move |body| parse_html().from_utf8().from_iter(body))
-        })
+    let works = uris.map(move |uri: Uri| {
+        client
+            .get(uri.clone())
+            .map(move |res| {
+                eprintln!("Downloaded page from {}\nResponse: {}", uri, res.status());
+                res.body()
+                    .concat2()
+                    .map(move |body| {
+                        let doc = Html::parse_document(&*String::from_utf8_lossy(&*body));
+                        stream::iter_ok(entrie_uris_from_body(doc))
+                    })
+                    .flatten_stream()
+            })
+            .flatten_stream()
     });
-    let list_stream = futures_unordered(work);
+    let list_stream = stream::iter_ok::<_, hyper::Error>(works).flatten();
 
     let res = core.run(list_stream.collect());
     println!("{:?}", res)
