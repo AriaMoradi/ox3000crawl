@@ -1,6 +1,6 @@
 #![feature(conservative_impl_trait)]
 #![feature(try_trait)]
-#![feature(nll)]
+// #![feature(nll)]
 #![feature(underscore_lifetimes)]
 
 extern crate futures;
@@ -33,12 +33,14 @@ fn entry_uris(client: Client<HttpConnector>) -> impl Stream<Item = String, Error
         .map(|uri| uri.parse().unwrap());
 
     stream::iter_ok(uris)
-        .and_then(move |uri: Uri| {
-            client.get(uri.clone()).map(move |res| {
+        .map(move |uri: Uri| {
+            println!("get: {}", uri);
+            client.get({ uri.clone() }).map(move |res| {
                 eprintln!("Downloaded page from {}\nResponse: {}", uri, res.status());
                 res
             })
         })
+        .buffer_unordered(10)
         .and_then(|res| res.body().concat2())
         .map(|body| {
             let doc = Html::parse_document(&*String::from_utf8_lossy(&*body));
@@ -56,5 +58,5 @@ fn main() {
     // let entries = get_entries();
 
     let res = core.run(euris.collect());
-    println!("{:?}", res)
+    println!("{:?}", res.unwrap().len())
 }
