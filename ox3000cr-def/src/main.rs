@@ -9,8 +9,8 @@ extern crate scraper;
 extern crate tokio_core;
 
 use futures::{stream, Future, Stream};
-use hyper::{Client, Uri, client::HttpConnector};
-use tokio_core::reactor::Core;
+use hyper::{Client, Uri};
+use tokio_core::reactor::{Core,Handle};
 use scraper::{Html, Selector};
 
 const ENTRY_GROUPS_URL_PREFIX: &str =
@@ -26,7 +26,9 @@ fn entry_uris_from_body(body: &Html) -> Vec<String> {
         .collect()
 }
 
-fn entry_uris(client: Client<HttpConnector>) -> impl Stream<Item = String, Error = hyper::Error> {
+fn entry_uris(handle: &Handle) -> impl Stream<Item = String, Error = hyper::Error> {
+    let client = Client::new(&handle);
+
     let uris = ENTRY_GROUPS
         .iter()
         .map(|suffix| ENTRY_GROUPS_URL_PREFIX.to_string() + suffix)
@@ -35,7 +37,7 @@ fn entry_uris(client: Client<HttpConnector>) -> impl Stream<Item = String, Error
     stream::iter_ok(uris)
         .map(move |uri: Uri| {
             println!("get: {}", uri);
-            client.get({ uri.clone() }).map(move |res| {
+            client.get( uri.clone() ).map(move |res| {
                 eprintln!("Downloaded page from {}\nResponse: {}", uri, res.status());
                 res
             })
@@ -52,10 +54,9 @@ fn entry_uris(client: Client<HttpConnector>) -> impl Stream<Item = String, Error
 
 fn main() {
     let mut core = Core::new().unwrap();
-    let client = Client::new(&core.handle());
+    let handle = core.handle();
 
-    let euris = entry_uris(client);
-    // let entries = get_entries();
+    let euris = entry_uris(&handle);
 
     let res = core.run(euris.collect());
     println!("{:?}", res.unwrap().len())
