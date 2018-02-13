@@ -7,12 +7,14 @@ from requests.adapters import HTTPAdapter
 
 session = requests.Session()
 session.mount('http://', HTTPAdapter(max_retries=10))
+session.mount('https://', HTTPAdapter(max_retries=10))
+
 
 def get_entries():
     """Get all the Oxford 3000 (R) wrods from http://www.oxfordlearnersdictionaries.com/wordlist/english/oxford3000/Oxford3000 and links to their definition."""
     # make links of every page groups
     entry_groups = ['A-B', 'C-D', 'E-G', 'H-K', 'L-N', 'O-P', 'Q-R', 'S', 'T', 'U-Z']
-    entry_groups_url_prefix = 'http://www.oxfordlearnersdictionaries.com/wordlist/english/oxford3000/Oxford3000_'
+    entry_groups_url_prefix = 'https://www.oxfordlearnersdictionaries.com/wordlist/english/oxford3000/Oxford3000_'
     entry_groups_urls = map(lambda e: entry_groups_url_prefix + e, entry_groups)
 
     # entries contains word and link
@@ -53,16 +55,18 @@ def get_entries():
             print("nearby: downloading page from %s ..." % this_link, file=sys.stderr)
             this_page = html.fromstring(session.get(this_link).text)
             if len(this_page.cssselect('.oxford3000')) == 0: continue
-            
+
             print("capture %s from %s" % (word, this_link), file=sys.stderr)
             more_entries.append((word, this_link))
-        
+
     entries.extend(more_entries)
     return entries
+
 
 def innerHTML(sentence):
     return (sentence.text or '') + \
             ''.join([etree.tostring(child).decode('utf-8') for child in sentence.getchildren()])
+
 
 def get_definitions(link):
     print("downloading page from %s ..." % link, file=sys.stderr)
@@ -94,12 +98,14 @@ def get_definitions(link):
     defhtml += '</ol> '
     return defhtml
 
+
 def main():
     entries = get_entries()
     for (word, link) in entries:
         definitions = get_definitions(link)
         print(word, link, definitions, sep='\t')
-        
+
 
 if __name__ == '__main__':
     main()
+
