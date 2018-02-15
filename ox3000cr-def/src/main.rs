@@ -9,12 +9,14 @@ extern crate hyper;
 extern crate hyper_tls;
 extern crate scraper;
 extern crate tokio_core;
+extern crate maud;
 
 use futures::prelude::*;
 use futures::{stream, Future, Stream};
 use hyper::{Client, Uri};
 use tokio_core::reactor::{Core, Handle};
 use scraper::{Html, Selector};
+use maud::html;
 
 const ENTRY_GROUPS_URL_PREFIX: &str =
     "http://www.oxfordlearnersdictionaries.com/wordlist/english/oxford3000/Oxford3000_";
@@ -22,7 +24,23 @@ const ENTRY_GROUPS: &[&str] = &[
     "A-B", "C-D", "E-G", "H-K", "L-N", "O-P", "Q-R", "S", "T", "U-Z"
 ];
 
-fn entry_uris_from_body(body: &Html) -> (Vec<String>, Option<Uri>) {
+#[async]
+fn download_doc(uri: Uri, handle: Handle) -> hyper::Result<Html> {
+    let connector = hyper_tls::HttpsConnector::new(4, &handle).unwrap();
+    let client = Client::configure().connector(connector).build(&handle);
+
+    eprintln!("Get: {}", uri);
+    let res = await!(client.get(uri.clone()))?;
+    eprintln!("Downloaded page from {}\nResponse: {}", uri, res.status());
+
+    let body = await!(res.body().concat2())?;
+    Ok(Html::parse_document(&*String::from_utf8_lossy(&*body)))
+}
+
+#[async]
+fn pages_uri_and_next(uri: Uri, handle: Handle) -> hyper::Result<(Vec<String>, Option<Uri>)> {
+    let body = await!(download_doc(uri, handle))?;
+
     let select_word = Selector::parse("[title~=definition]").unwrap();
     let uris = body.select(&select_word)
         .map(|m| m.value().attr("href").unwrap().to_string())
@@ -34,19 +52,7 @@ fn entry_uris_from_body(body: &Html) -> (Vec<String>, Option<Uri>) {
         .next()
         .map(|m| m.value().attr("href").unwrap().parse().unwrap());
 
-    (uris, link)
-}
-
-#[async]
-fn pages_uri(uri: Uri, handle: Handle) -> hyper::Result<(Vec<String>, Option<Uri>)> {
-    let connector = hyper_tls::HttpsConnector::new(4, &handle).unwrap();
-    let client = Client::configure().connector(connector).build(&handle);
-    eprintln!("Get: {}", uri);
-    let res = await!(client.get(uri.clone()))?;
-    eprintln!("Downloaded page from {}\nResponse: {}", uri, res.status());
-    let body = await!(res.body().concat2())?;
-    let doc = Html::parse_document(&*String::from_utf8_lossy(&*body));
-    Ok(entry_uris_from_body(&doc))
+    Ok((uris, link))
 }
 
 fn entry_uris<'a>(handle: &'a Handle) -> impl Stream<Item = String, Error = hyper::Error> + 'a {
@@ -57,7 +63,7 @@ fn entry_uris<'a>(handle: &'a Handle) -> impl Stream<Item = String, Error = hype
 
     let jobs = uris.map(|uri| {
         stream::unfold(Some(uri), move |uri| {
-            uri.map(|uri| pages_uri(uri, handle.clone()))
+            uri.map(|uri| pages_uri_and_next(uri, handle.clone()))
         }).concat2()
             .map(stream::iter_ok)
     });
@@ -65,12 +71,42 @@ fn entry_uris<'a>(handle: &'a Handle) -> impl Stream<Item = String, Error = hype
     stream::futures_unordered(jobs).flatten()
 }
 
+#[async]
+fn get_defs(uri: Uri, handle: Handle) -> hyper::Result<String> {
+    let body = await!(download_doc(uri, handle))?;
+
+    let select_def_items = Selector::parse(".sn-gs > .sn-g").unwrap();
+    let select_ox3000_def_items = Selector::parse(".sn-gs > [ox3000=y]").unwrap();
+    let select_def = Selector::parse(".def").unwrap();
+    let select_examples = Selector::parse(".sn-g > .x-gs > .x-g .x").unwrap();
+
+    let mut defs = body.select(&select_def_items);
+    let ox3000_defs = if defs.by_ref().count() == 1 { defs } else { body.select(&select_ox3000_def_items) };
+
+    let result = html! {
+        @for def_item in ox3000_defs {
+            div class="def" {
+                (def_item
+                    .select(&select_def)
+                    .next()
+                    .map(|m| m.text().next().unwrap())
+                    .unwrap_or(""))
+            }
+            li {
+            }
+        }
+    };
+
+    Ok(result.into_string())
+}
+
 fn main() {
     let mut core = Core::new().unwrap();
     let handle = core.handle();
 
     let euris = entry_uris(&handle);
+    let defs = euris.map(|uri| uri.parse().unwrap()).and_then(|uri| get_defs(uri, handle.clone()));
 
-    let res = core.run(euris.collect());
-    println!("{:?}", res.unwrap().len())
+    let res = core.run(defs.take(1).collect());
+    println!("{:?}", res.unwrap())
 }
