@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["FloatLit","A type which represents a floating point value."],["IntLit","A type which represents an integer literal."]],"trait":[["LiteralExt",""]]});

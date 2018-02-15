@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="API documentation for the Rust `ox3000cr_def` crate.">
-    <meta name="keywords" content="rust, rustlang, rust-lang, ox3000cr_def">
+    <meta name="description" content="API documentation for the Rust `literalext` crate.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, literalext">
 
-    <title>ox3000cr_def - Rust</title>
+    <title>literalext - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
     <link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle">
@@ -33,7 +33,7 @@
     <nav class="sidebar">
         <div class="sidebar-menu">&#9776;</div>
         
-        <p class='location'>Crate ox3000cr_def</p><div class="sidebar-elems"><p class='location'></p><script>window.sidebarCurrent = {name: 'ox3000cr_def', ty: 'mod', relpath: '../'};</script></div>
+        <p class='location'>Crate literalext</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#structs">Structs</a></li><li><a href="#traits">Traits</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'literalext', ty: 'mod', relpath: '../'};</script></div>
     </nav>
 
     <div class="theme-picker">
@@ -55,12 +55,58 @@
     </nav>
 
     <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Crate <a class="mod" href=''>ox3000cr_def</a></span><span class='out-of-band'><span id='render-detail'>
+<h1 class='fqn'><span class='in-band'>Crate <a class="mod" href=''>literalext</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/ox3000cr_def/main.rs.html#1-112' title='goto source code'>[src]</a></span></h1>
-</section>
+               </span><a class='srclink' href='../src/literalext/lib.rs.html#1-209' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>This crate provides extension methods to <code>proc-macro</code>, and <code>proc-macro2</code>'s
+<code>Literal</code> types. These methods provide a mechanism for extracting the value
+of the type.</p>
+<h2 id="supported-features" class="section-header"><a href="#supported-features">Supported Features</a></h2>
+<ul>
+<li>
+<p><code>i128</code>: Add support for interpreting the <code>i128</code> and <code>u128</code> integer types.
+<em>nightly only</em></p>
+</li>
+<li>
+<p><code>proc-macro2</code> <strong>default</strong>: Implement <code>LiteralExt</code> on <code>proc_macro2::Literal</code>.</p>
+</li>
+<li>
+<p><code>proc-macro</code>: Implement <code>LiteralExt</code> on <code>proc_macro::Literal</code>.
+<em>nightly only</em></p>
+</li>
+<li>
+<p><code>dummy</code>: Export a type <code>DummyLiteral</code> with a public constructor
+which implements the <code>LiteralExt</code> trait.</p>
+</li>
+</ul>
+</div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.FloatLit.html"
+                                  title='struct literalext::FloatLit'>FloatLit</a></td>
+                           <td class='docblock-short'>
+                                <p>A type which represents a floating point value.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.IntLit.html"
+                                  title='struct literalext::IntLit'>IntLit</a></td>
+                           <td class='docblock-short'>
+                                <p>A type which represents an integer literal.</p>
+
+                           </td>
+                       </tr></table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="trait" href="trait.LiteralExt.html"
+                                  title='trait literalext::LiteralExt'>LiteralExt</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>
@@ -119,7 +165,7 @@
 
     <script>
         window.rootPath = "../";
-        window.currentCrate = "ox3000cr_def";
+        window.currentCrate = "literalext";
     </script>
     <script src="../main.js"></script>
     <script defer src="../search-index.js"></script>

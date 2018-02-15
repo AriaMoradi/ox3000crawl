@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="API documentation for the Rust `ox3000cr_def` crate.">
-    <meta name="keywords" content="rust, rustlang, rust-lang, ox3000cr_def">
+    <meta name="description" content="API documentation for the Rust `DOCTYPE` constant in crate `maud`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, DOCTYPE">
 
-    <title>ox3000cr_def - Rust</title>
+    <title>maud::DOCTYPE - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
     <link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle">
@@ -20,7 +20,7 @@
     
     
 </head>
-<body class="rustdoc mod">
+<body class="rustdoc constant">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -33,7 +33,7 @@
     <nav class="sidebar">
         <div class="sidebar-menu">&#9776;</div>
         
-        <p class='location'>Crate ox3000cr_def</p><div class="sidebar-elems"><p class='location'></p><script>window.sidebarCurrent = {name: 'ox3000cr_def', ty: 'mod', relpath: '../'};</script></div>
+        <p class='location'><a href='index.html'>maud</a></p><script>window.sidebarCurrent = {name: 'DOCTYPE', ty: 'constant', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <div class="theme-picker">
@@ -55,12 +55,31 @@
     </nav>
 
     <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Crate <a class="mod" href=''>ox3000cr_def</a></span><span class='out-of-band'><span id='render-detail'>
+<h1 class='fqn'><span class='in-band'>Constant <a href='index.html'>maud</a>::<wbr><a class="constant" href=''>DOCTYPE</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/ox3000cr_def/main.rs.html#1-112' title='goto source code'>[src]</a></span></h1>
-</section>
+               </span><a class='srclink' href='../src/maud/lib.rs.html#149' title='goto source code'>[src]</a></span></h1>
+<pre class='rust const'>pub const DOCTYPE: <a class="struct" href="../maud/struct.PreEscaped.html" title="struct maud::PreEscaped">PreEscaped</a>&lt;&amp;'static <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>&gt;<code> = </code><code>PreEscaped(&quot;&lt;!DOCTYPE html&gt;&quot;)</code></pre><div class='docblock'><p>The literal string <code>&lt;!DOCTYPE html&gt;</code>.</p>
+<h1 id="example" class="section-header"><a href="#example">Example</a></h1>
+<p>A minimal web page:</p>
+
+<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><pre class="rust rust-example-rendered ignore">
+<span class="kw">use</span> <span class="ident">maud</span>::<span class="ident">DOCTYPE</span>;
+
+<span class="kw">let</span> <span class="ident">markup</span> <span class="op">=</span> <span class="macro">html</span><span class="macro">!</span> {
+    (<span class="ident">DOCTYPE</span>)
+    <span class="ident">html</span> {
+        <span class="ident">head</span> {
+            <span class="ident">meta</span> <span class="ident">charset</span><span class="op">=</span><span class="string">&quot;utf-8&quot;</span>;
+            <span class="ident">title</span> <span class="string">&quot;Test page&quot;</span>
+        }
+        <span class="ident">body</span> {
+            <span class="ident">p</span> <span class="string">&quot;Hello, world!&quot;</span>
+        }
+    }
+};</pre>
+</div></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>
@@ -119,7 +138,7 @@
 
     <script>
         window.rootPath = "../";
-        window.currentCrate = "ox3000cr_def";
+        window.currentCrate = "maud";
     </script>
     <script src="../main.js"></script>
     <script defer src="../search-index.js"></script>
