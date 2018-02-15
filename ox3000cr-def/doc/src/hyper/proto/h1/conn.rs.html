@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/root/.cargo/registry/src/github.com-1ecc6299db9ec823/hyper-0.11.17/src/proto/h1/conn.rs`.">
+    <meta name="description" content="Source to the Rust file `/root/.cargo/registry/src/github.com-1ecc6299db9ec823/hyper-0.11.18/src/proto/h1/conn.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>conn.rs.html -- source</title>
@@ -1308,6 +1308,10 @@
 <span id="1252">1252</span>
 <span id="1253">1253</span>
 <span id="1254">1254</span>
+<span id="1255">1255</span>
+<span id="1256">1256</span>
+<span id="1257">1257</span>
+<span id="1258">1258</span>
 </pre><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>::{<span class="self">self</span>};
@@ -1371,6 +1375,10 @@
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_max_buf_size</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">max</span>: <span class="ident">usize</span>) {
         <span class="self">self</span>.<span class="ident">io</span>.<span class="ident">set_max_buf_size</span>(<span class="ident">max</span>);
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_write_strategy_flatten</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+        <span class="self">self</span>.<span class="ident">io</span>.<span class="ident">set_write_strategy_flatten</span>();
     }
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;tokio-proto&quot;</span>)]</span>

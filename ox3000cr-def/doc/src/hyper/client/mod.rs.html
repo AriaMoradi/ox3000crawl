@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/root/.cargo/registry/src/github.com-1ecc6299db9ec823/hyper-0.11.17/src/client/mod.rs`.">
+    <meta name="description" content="Source to the Rust file `/root/.cargo/registry/src/github.com-1ecc6299db9ec823/hyper-0.11.18/src/client/mod.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>mod.rs.html -- source</title>
@@ -576,6 +576,28 @@
 <span id="520">520</span>
 <span id="521">521</span>
 <span id="522">522</span>
+<span id="523">523</span>
+<span id="524">524</span>
+<span id="525">525</span>
+<span id="526">526</span>
+<span id="527">527</span>
+<span id="528">528</span>
+<span id="529">529</span>
+<span id="530">530</span>
+<span id="531">531</span>
+<span id="532">532</span>
+<span id="533">533</span>
+<span id="534">534</span>
+<span id="535">535</span>
+<span id="536">536</span>
+<span id="537">537</span>
+<span id="538">538</span>
+<span id="539">539</span>
+<span id="540">540</span>
+<span id="541">541</span>
+<span id="542">542</span>
+<span id="543">543</span>
+<span id="544">544</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! HTTP Client</span>
 
@@ -621,6 +643,7 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Client</span><span class="op">&lt;</span><span class="ident">C</span>, <span class="ident">B</span> <span class="op">=</span> <span class="ident">proto</span>::<span class="ident">Body</span><span class="op">&gt;</span> {
     <span class="ident">connector</span>: <span class="ident">C</span>,
     <span class="ident">executor</span>: <span class="ident">Exec</span>,
+    <span class="ident">h1_writev</span>: <span class="ident">bool</span>,
     <span class="ident">pool</span>: <span class="ident">Pool</span><span class="op">&lt;</span><span class="ident">HyperClient</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;&gt;</span>,
 }
 
@@ -675,6 +698,7 @@
         <span class="ident">Client</span> {
             <span class="ident">connector</span>: <span class="ident">config</span>.<span class="ident">connector</span>,
             <span class="ident">executor</span>: <span class="ident">exec</span>,
+            <span class="ident">h1_writev</span>: <span class="ident">config</span>.<span class="ident">h1_writev</span>,
             <span class="ident">pool</span>: <span class="ident">Pool</span>::<span class="ident">new</span>(<span class="ident">config</span>.<span class="ident">keep_alive</span>, <span class="ident">config</span>.<span class="ident">keep_alive_timeout</span>)
         }
     }
@@ -776,6 +800,7 @@
             <span class="kw">let</span> <span class="ident">executor</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">executor</span>.<span class="ident">clone</span>();
             <span class="kw">let</span> <span class="ident">pool</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">pool</span>.<span class="ident">clone</span>();
             <span class="kw">let</span> <span class="ident">pool_key</span> <span class="op">=</span> <span class="ident">Rc</span>::<span class="ident">new</span>(<span class="ident">domain</span>.<span class="ident">to_string</span>());
+            <span class="kw">let</span> <span class="ident">h1_writev</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">h1_writev</span>;
             <span class="self">self</span>.<span class="ident">connector</span>.<span class="ident">connect</span>(<span class="ident">url</span>)
                 .<span class="ident">and_then</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">io</span><span class="op">|</span> {
                     <span class="kw">let</span> (<span class="ident">tx</span>, <span class="ident">rx</span>) <span class="op">=</span> <span class="ident">dispatch</span>::<span class="ident">channel</span>();
@@ -784,7 +809,10 @@
                         <span class="ident">should_close</span>: <span class="ident">Cell</span>::<span class="ident">new</span>(<span class="bool-val">true</span>),
                     };
                     <span class="kw">let</span> <span class="ident">pooled</span> <span class="op">=</span> <span class="ident">pool</span>.<span class="ident">pooled</span>(<span class="ident">pool_key</span>, <span class="ident">tx</span>);
-                    <span class="kw">let</span> <span class="ident">conn</span> <span class="op">=</span> <span class="ident">proto</span>::<span class="ident">Conn</span>::<span class="op">&lt;</span>_, _, <span class="ident">proto</span>::<span class="ident">ClientTransaction</span>, _<span class="op">&gt;</span>::<span class="ident">new</span>(<span class="ident">io</span>, <span class="ident">pooled</span>.<span class="ident">clone</span>());
+                    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">conn</span> <span class="op">=</span> <span class="ident">proto</span>::<span class="ident">Conn</span>::<span class="op">&lt;</span>_, _, <span class="ident">proto</span>::<span class="ident">ClientTransaction</span>, _<span class="op">&gt;</span>::<span class="ident">new</span>(<span class="ident">io</span>, <span class="ident">pooled</span>.<span class="ident">clone</span>());
+                    <span class="kw">if</span> <span class="op">!</span><span class="ident">h1_writev</span> {
+                        <span class="ident">conn</span>.<span class="ident">set_write_strategy_flatten</span>();
+                    }
                     <span class="kw">let</span> <span class="ident">dispatch</span> <span class="op">=</span> <span class="ident">proto</span>::<span class="ident">dispatch</span>::<span class="ident">Dispatcher</span>::<span class="ident">new</span>(<span class="ident">proto</span>::<span class="ident">dispatch</span>::<span class="ident">Client</span>::<span class="ident">new</span>(<span class="ident">rx</span>), <span class="ident">conn</span>);
                     <span class="ident">executor</span>.<span class="ident">execute</span>(<span class="ident">dispatch</span>.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="macro">debug</span><span class="macro">!</span>(<span class="string">&quot;client connection error: {}&quot;</span>, <span class="ident">e</span>)))<span class="question-mark">?</span>;
                     <span class="prelude-val">Ok</span>(<span class="ident">pooled</span>)
@@ -835,6 +863,7 @@
         <span class="ident">Client</span> {
             <span class="ident">connector</span>: <span class="self">self</span>.<span class="ident">connector</span>.<span class="ident">clone</span>(),
             <span class="ident">executor</span>: <span class="self">self</span>.<span class="ident">executor</span>.<span class="ident">clone</span>(),
+            <span class="ident">h1_writev</span>: <span class="self">self</span>.<span class="ident">h1_writev</span>,
             <span class="ident">pool</span>: <span class="self">self</span>.<span class="ident">pool</span>.<span class="ident">clone</span>(),
         }
     }
@@ -886,9 +915,9 @@
     <span class="ident">connector</span>: <span class="ident">C</span>,
     <span class="ident">keep_alive</span>: <span class="ident">bool</span>,
     <span class="ident">keep_alive_timeout</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Duration</span><span class="op">&gt;</span>,
+    <span class="ident">h1_writev</span>: <span class="ident">bool</span>,
     <span class="comment">//TODO: make use of max_idle config</span>
     <span class="ident">max_idle</span>: <span class="ident">usize</span>,
-    <span class="ident">no_proto</span>: <span class="ident">bool</span>,
 }
 
 <span class="doccomment">/// Phantom type used to signal that `Config` should create a `HttpConnector`.</span>
@@ -903,8 +932,8 @@
             <span class="ident">connector</span>: <span class="ident">UseDefaultConnector</span>(()),
             <span class="ident">keep_alive</span>: <span class="bool-val">true</span>,
             <span class="ident">keep_alive_timeout</span>: <span class="prelude-val">Some</span>(<span class="ident">Duration</span>::<span class="ident">from_secs</span>(<span class="number">90</span>)),
+            <span class="ident">h1_writev</span>: <span class="bool-val">true</span>,
             <span class="ident">max_idle</span>: <span class="number">5</span>,
-            <span class="ident">no_proto</span>: <span class="bool-val">false</span>,
         }
     }
 }
@@ -927,8 +956,8 @@
             <span class="ident">connector</span>: <span class="self">self</span>.<span class="ident">connector</span>,
             <span class="ident">keep_alive</span>: <span class="self">self</span>.<span class="ident">keep_alive</span>,
             <span class="ident">keep_alive_timeout</span>: <span class="self">self</span>.<span class="ident">keep_alive_timeout</span>,
+            <span class="ident">h1_writev</span>: <span class="self">self</span>.<span class="ident">h1_writev</span>,
             <span class="ident">max_idle</span>: <span class="self">self</span>.<span class="ident">max_idle</span>,
-            <span class="ident">no_proto</span>: <span class="self">self</span>.<span class="ident">no_proto</span>,
         }
     }
 
@@ -941,8 +970,8 @@
             <span class="ident">connector</span>: <span class="ident">val</span>,
             <span class="ident">keep_alive</span>: <span class="self">self</span>.<span class="ident">keep_alive</span>,
             <span class="ident">keep_alive_timeout</span>: <span class="self">self</span>.<span class="ident">keep_alive_timeout</span>,
+            <span class="ident">h1_writev</span>: <span class="self">self</span>.<span class="ident">h1_writev</span>,
             <span class="ident">max_idle</span>: <span class="self">self</span>.<span class="ident">max_idle</span>,
-            <span class="ident">no_proto</span>: <span class="self">self</span>.<span class="ident">no_proto</span>,
         }
     }
 
@@ -976,6 +1005,20 @@
         self
     }
     */</span>
+
+    <span class="doccomment">/// Set whether HTTP/1 connections should try to use vectored writes,</span>
+    <span class="doccomment">/// or always flatten into a single buffer.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Note that setting this to false may mean more copies of body data,</span>
+    <span class="doccomment">/// but may also improve performance when an IO transport doesn&#39;t</span>
+    <span class="doccomment">/// support vectored writes well, such as most TLS implementations.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Default is true.</span>
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">http1_writev</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">val</span>: <span class="ident">bool</span>) <span class="op">-&gt;</span> <span class="ident">Config</span><span class="op">&lt;</span><span class="ident">C</span>, <span class="ident">B</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">h1_writev</span> <span class="op">=</span> <span class="ident">val</span>;
+        <span class="self">self</span>
+    }
 
     <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
     <span class="attribute">#[<span class="ident">deprecated</span>(<span class="ident">since</span><span class="op">=</span><span class="string">&quot;0.11.11&quot;</span>, <span class="ident">note</span><span class="op">=</span><span class="string">&quot;no_proto is always enabled&quot;</span>)]</span>
@@ -1023,6 +1066,7 @@
         <span class="ident">f</span>.<span class="ident">debug_struct</span>(<span class="string">&quot;Config&quot;</span>)
             .<span class="ident">field</span>(<span class="string">&quot;keep_alive&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">keep_alive</span>)
             .<span class="ident">field</span>(<span class="string">&quot;keep_alive_timeout&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">keep_alive_timeout</span>)
+            .<span class="ident">field</span>(<span class="string">&quot;http1_writev&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">h1_writev</span>)
             .<span class="ident">field</span>(<span class="string">&quot;max_idle&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">max_idle</span>)
             .<span class="ident">finish</span>()
     }
