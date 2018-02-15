@@ -40,9 +40,7 @@ fn entry_uris_from_body(body: &Html) -> (Vec<String>, Option<Uri>) {
 #[async]
 fn pages_uri(uri: Uri, handle: Handle) -> hyper::Result<(Vec<String>, Option<Uri>)> {
     let connector = hyper_tls::HttpsConnector::new(4, &handle).unwrap();
-    let client = Client::configure()
-        .connector(connector)
-        .build(&handle);
+    let client = Client::configure().connector(connector).build(&handle);
     eprintln!("Get: {}", uri);
     let res = await!(client.get(uri.clone()))?;
     eprintln!("Downloaded page from {}\nResponse: {}", uri, res.status());
@@ -60,7 +58,8 @@ fn entry_uris<'a>(handle: &'a Handle) -> impl Stream<Item = String, Error = hype
     let jobs = uris.map(|uri| {
         stream::unfold(Some(uri), move |uri| {
             uri.map(|uri| pages_uri(uri, handle.clone()))
-        }).concat2().map(stream::iter_ok)
+        }).concat2()
+            .map(stream::iter_ok)
     });
 
     stream::futures_unordered(jobs).flatten()
