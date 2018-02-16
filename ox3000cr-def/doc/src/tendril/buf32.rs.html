@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/root/.cargo/registry/src/github.com-1ecc6299db9ec823/tendril-0.2.4/src/buf32.rs`.">
+    <meta name="description" content="Source to the Rust file `/root/.cargo/registry/src/github.com-1ecc6299db9ec823/tendril-0.4.0/src/buf32.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>buf32.rs.html -- source</title>
@@ -170,7 +170,6 @@
 <span id="114">114</span>
 <span id="115">115</span>
 <span id="116">116</span>
-<span id="117">117</span>
 </pre><pre class="rust ">
 <span class="comment">// Licensed under the Apache License, Version 2.0 &lt;LICENSE-APACHE or</span>
 <span class="comment">// http://www.apache.org/licenses/LICENSE-2.0&gt; or the MIT license</span>
@@ -190,7 +189,6 @@
 
 <span class="doccomment">/// A buffer points to a header of type `H`, which is followed by `MIN_CAP` or more</span>
 <span class="doccomment">/// bytes of storage.</span>
-<span class="attribute">#[<span class="ident">repr</span>(<span class="ident">packed</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Buf32</span><span class="op">&lt;</span><span class="ident">H</span><span class="op">&gt;</span> {
     <span class="kw">pub</span> <span class="ident">ptr</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">H</span>,
     <span class="kw">pub</span> <span class="ident">len</span>: <span class="ident">u32</span>,

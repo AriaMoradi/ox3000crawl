@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/root/.cargo/registry/src/github.com-1ecc6299db9ec823/html5ever-0.5.4/src/tokenizer/interface.rs`.">
+    <meta name="description" content="Source to the Rust file `/root/.cargo/registry/src/github.com-1ecc6299db9ec823/html5ever-0.21.0/src/tokenizer/interface.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>interface.rs.html -- source</title>
@@ -164,17 +164,8 @@
 <span id="108">108</span>
 <span id="109">109</span>
 <span id="110">110</span>
-<span id="111">111</span>
-<span id="112">112</span>
-<span id="113">113</span>
-<span id="114">114</span>
-<span id="115">115</span>
-<span id="116">116</span>
-<span id="117">117</span>
-<span id="118">118</span>
-<span id="119">119</span>
 </pre><pre class="rust ">
-<span class="comment">// Copyright 2014 The html5ever Project Developers. See the</span>
+<span class="comment">// Copyright 2014-2017 The html5ever Project Developers. See the</span>
 <span class="comment">// COPYRIGHT file at the top-level directory of this distribution.</span>
 <span class="comment">//</span>
 <span class="comment">// Licensed under the Apache License, Version 2.0 &lt;LICENSE-APACHE or</span>
@@ -183,12 +174,11 @@
 <span class="comment">// option. This file may not be copied, modified, or distributed</span>
 <span class="comment">// except according to those terms.</span>
 
-<span class="kw">use</span> <span class="ident">tokenizer</span>::<span class="ident">states</span>;
-
+<span class="kw">use</span> <span class="ident">LocalName</span>;
+<span class="kw">use</span> <span class="ident">interface</span>::<span class="ident">Attribute</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">borrow</span>::<span class="ident">Cow</span>;
-
-<span class="kw">use</span> <span class="ident">string_cache</span>::{<span class="ident">Atom</span>, <span class="ident">QualName</span>};
 <span class="kw">use</span> <span class="ident">tendril</span>::<span class="ident">StrTendril</span>;
+<span class="kw">use</span> <span class="ident">tokenizer</span>::<span class="ident">states</span>;
 
 <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">TagKind</span>::{<span class="ident">StartTag</span>, <span class="ident">EndTag</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">Token</span>::{<span class="ident">DoctypeToken</span>, <span class="ident">TagToken</span>, <span class="ident">CommentToken</span>, <span class="ident">CharacterTokens</span>};
@@ -215,18 +205,6 @@
     }
 }
 
-<span class="doccomment">/// A tag attribute.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// The namespace on the attribute name is almost always ns!(&quot;&quot;).</span>
-<span class="doccomment">/// The tokenizer creates all attributes this way, but the tree</span>
-<span class="doccomment">/// builder will adjust certain attribute names inside foreign</span>
-<span class="doccomment">/// content (MathML, SVG).</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">PartialOrd</span>, <span class="ident">Ord</span>, <span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Attribute</span> {
-    <span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">QualName</span>,
-    <span class="kw">pub</span> <span class="ident">value</span>: <span class="ident">StrTendril</span>,
-}
-
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Hash</span>, <span class="ident">Copy</span>, <span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">TagKind</span> {
     <span class="ident">StartTag</span>,
@@ -237,7 +215,7 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Tag</span> {
     <span class="kw">pub</span> <span class="ident">kind</span>: <span class="ident">TagKind</span>,
-    <span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">Atom</span>,
+    <span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">LocalName</span>,
     <span class="kw">pub</span> <span class="ident">self_closing</span>: <span class="ident">bool</span>,
     <span class="kw">pub</span> <span class="ident">attrs</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Attribute</span><span class="op">&gt;</span>,
 }
@@ -270,13 +248,24 @@
     <span class="ident">ParseError</span>(<span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>),
 }
 
-<span class="comment">// FIXME: rust-lang/rust#22629</span>
-<span class="kw">unsafe</span> <span class="kw">impl</span> <span class="ident">Send</span> <span class="kw">for</span> <span class="ident">Token</span> { }
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>)]</span>
+<span class="attribute">#[<span class="ident">must_use</span>]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">TokenSinkResult</span><span class="op">&lt;</span><span class="ident">Handle</span><span class="op">&gt;</span> {
+    <span class="ident">Continue</span>,
+    <span class="ident">Script</span>(<span class="ident">Handle</span>),
+    <span class="ident">Plaintext</span>,
+    <span class="ident">RawData</span>(<span class="ident">states</span>::<span class="ident">RawKind</span>)
+}
 
 <span class="doccomment">/// Types which can receive tokens from the tokenizer.</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">TokenSink</span> {
+    <span class="kw">type</span> <span class="ident">Handle</span>;
+
     <span class="doccomment">/// Process a token.</span>
-    <span class="kw">fn</span> <span class="ident">process_token</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">token</span>: <span class="ident">Token</span>);
+    <span class="kw">fn</span> <span class="ident">process_token</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">token</span>: <span class="ident">Token</span>, <span class="ident">line_number</span>: <span class="ident">u64</span>) <span class="op">-&gt;</span> <span class="ident">TokenSinkResult</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Handle</span><span class="op">&gt;</span>;
+
+    <span class="comment">// Signal sink that tokenization reached the end.</span>
+    <span class="kw">fn</span> <span class="ident">end</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {}
 
     <span class="doccomment">/// Used in the markup declaration open state. By default, this always</span>
     <span class="doccomment">/// returns false and thus all CDATA sections are tokenized as bogus</span>
@@ -284,13 +273,6 @@
     <span class="doccomment">/// https://html.spec.whatwg.org/multipage/#markup-declaration-open-state</span>
     <span class="kw">fn</span> <span class="ident">adjusted_current_node_present_but_not_in_html_namespace</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
         <span class="bool-val">false</span>
-    }
-
-    <span class="doccomment">/// The tokenizer will call this after emitting any tag.</span>
-    <span class="doccomment">/// This allows the tree builder to change the tokenizer&#39;s state.</span>
-    <span class="doccomment">/// By default no state changes occur.</span>
-    <span class="kw">fn</span> <span class="ident">query_state_change</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">states</span>::<span class="ident">State</span><span class="op">&gt;</span> {
-        <span class="prelude-val">None</span>
     }
 }
 </pre>

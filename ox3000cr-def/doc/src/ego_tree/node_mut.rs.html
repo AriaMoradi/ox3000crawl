@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/root/.cargo/registry/src/github.com-1ecc6299db9ec823/ego-tree-0.1.1/src/node_mut.rs`.">
+    <meta name="description" content="Source to the Rust file `/root/.cargo/registry/src/github.com-1ecc6299db9ec823/ego-tree-0.2.0/src/node_mut.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>node_mut.rs.html -- source</title>
@@ -441,6 +441,12 @@
 <span id="385">385</span>
 <span id="386">386</span>
 <span id="387">387</span>
+<span id="388">388</span>
+<span id="389">389</span>
+<span id="390">390</span>
+<span id="391">391</span>
+<span id="392">392</span>
+<span id="393">393</span>
 </pre><pre class="rust ">
 <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">NodeMut</span>, <span class="ident">Node</span>, <span class="ident">NodeId</span>, <span class="ident">NodeRef</span>};
 
@@ -773,6 +779,9 @@
             <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="kw">return</span>,
         };
 
+        <span class="self">self</span>.<span class="ident">tree</span>.<span class="ident">get_node_unchecked_mut</span>(<span class="ident">new_children</span>.<span class="number">0</span>).<span class="ident">parent</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="self">self</span>.<span class="ident">index</span>);
+        <span class="self">self</span>.<span class="ident">tree</span>.<span class="ident">get_node_unchecked_mut</span>(<span class="ident">new_children</span>.<span class="number">1</span>).<span class="ident">parent</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="self">self</span>.<span class="ident">index</span>);
+
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">node</span>().<span class="ident">children</span>.<span class="ident">is_none</span>() {
             <span class="self">self</span>.<span class="ident">node_mut</span>().<span class="ident">children</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">new_children</span>);
             <span class="kw">return</span>;
@@ -800,6 +809,9 @@
             <span class="prelude-val">Some</span>(<span class="ident">indexes</span>) <span class="op">=&gt;</span> <span class="ident">indexes</span>,
             <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="kw">return</span>,
         };
+
+        <span class="self">self</span>.<span class="ident">tree</span>.<span class="ident">get_node_unchecked_mut</span>(<span class="ident">new_children</span>.<span class="number">0</span>).<span class="ident">parent</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="self">self</span>.<span class="ident">index</span>);
+        <span class="self">self</span>.<span class="ident">tree</span>.<span class="ident">get_node_unchecked_mut</span>(<span class="ident">new_children</span>.<span class="number">1</span>).<span class="ident">parent</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="self">self</span>.<span class="ident">index</span>);
 
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">node</span>().<span class="ident">children</span>.<span class="ident">is_none</span>() {
             <span class="self">self</span>.<span class="ident">node_mut</span>().<span class="ident">children</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">new_children</span>);

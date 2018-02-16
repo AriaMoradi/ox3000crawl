@@ -4,14 +4,17 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/root/.cargo/registry/src/github.com-1ecc6299db9ec823/markup5ever-0.5.0/interface/tree_builder.rs`.">
+    <meta name="description" content="Source to the Rust file `/root/.cargo/registry/src/github.com-1ecc6299db9ec823/markup5ever-0.6.2/interface/tree_builder.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>tree_builder.rs.html -- source</title>
 
     <link rel="stylesheet" type="text/css" href="../../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../../main.css">
+    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../../../dark.css">
+    <link rel="stylesheet" type="text/css" href="../../../main.css" id="themeStyle">
+    <script src="../../../storage.js"></script>
     
 
     
@@ -33,6 +36,13 @@
         
     </nav>
 
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../../../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../../../theme.js"></script>
     <nav class="sub">
         <form class="search-form js-only">
             <div class="search-container">
@@ -269,13 +279,6 @@
 <span id="223">223</span>
 <span id="224">224</span>
 <span id="225">225</span>
-<span id="226">226</span>
-<span id="227">227</span>
-<span id="228">228</span>
-<span id="229">229</span>
-<span id="230">230</span>
-<span id="231">231</span>
-<span id="232">232</span>
 </pre><pre class="rust ">
 <span class="comment">// Copyright 2014-2017 The html5ever Project Developers. See the</span>
 <span class="comment">// COPYRIGHT file at the top-level directory of this distribution.</span>
@@ -402,7 +405,7 @@
     <span class="doccomment">/// an associated document fragment called the &quot;template contents&quot; should</span>
     <span class="doccomment">/// also be created. Later calls to self.get_template_contents() with that</span>
     <span class="doccomment">/// given element return it.</span>
-    <span class="doccomment">/// https://html.spec.whatwg.org/multipage/#htmltemplateelement</span>
+    <span class="doccomment">/// https://html.spec.whatwg.org/multipage/#the-template-element</span>
     <span class="kw">fn</span> <span class="ident">create_element</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">name</span>: <span class="ident">QualName</span>, <span class="ident">attrs</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Attribute</span><span class="op">&gt;</span>, <span class="ident">flags</span>: <span class="ident">ElementFlags</span>)
                       <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Handle</span>;
 
@@ -447,17 +450,10 @@
     <span class="doccomment">/// Do two handles refer to the same node?</span>
     <span class="kw">fn</span> <span class="ident">same_node</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">x</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">Handle</span>, <span class="ident">y</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">Handle</span>) <span class="op">-&gt;</span> <span class="ident">bool</span>;
 
-    <span class="doccomment">/// Are two handles present in the same tree</span>
-    <span class="kw">fn</span> <span class="ident">same_tree</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">_x</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">Handle</span>, <span class="ident">_y</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">Handle</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> { <span class="bool-val">true</span> }
-
     <span class="doccomment">/// Set the document&#39;s quirks mode.</span>
     <span class="kw">fn</span> <span class="ident">set_quirks_mode</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">mode</span>: <span class="ident">QuirksMode</span>);
 
-    <span class="doccomment">/// Does the node have a parent?</span>
-    <span class="kw">fn</span> <span class="ident">has_parent_node</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">node</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">Handle</span>) <span class="op">-&gt;</span> <span class="ident">bool</span>;
-
     <span class="doccomment">/// Append a node as the sibling immediately before the given node.</span>
-    <span class="doccomment">/// This method will only be called if has_parent_node(sibling) is true</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// The tree builder promises that `sibling` is not a text node.  However its</span>
     <span class="doccomment">/// old previous sibling, which would become the new node&#39;s previous sibling,</span>
@@ -523,20 +519,22 @@
                 <h2>Keyboard Shortcuts</h2>
 
                 <dl>
-                    <dt>?</dt>
+                    <dt><kbd>?</kbd></dt>
                     <dd>Show this help dialog</dd>
-                    <dt>S</dt>
+                    <dt><kbd>S</kbd></dt>
                     <dd>Focus the search field</dd>
-                    <dt>↑</dt>
+                    <dt><kbd>↑</kbd></dt>
                     <dd>Move up in search results</dd>
-                    <dt>↓</dt>
+                    <dt><kbd>↓</kbd></dt>
                     <dd>Move down in search results</dd>
-                    <dt>↹</dt>
+                    <dt><kbd>↹</kbd></dt>
                     <dd>Switch tab</dd>
-                    <dt>&#9166;</dt>
+                    <dt><kbd>&#9166;</kbd></dt>
                     <dd>Go to active search result</dd>
-                    <dt style="width:31px;">+ / -</dt>
-                    <dd>Collapse/expand all sections</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
                 </dl>
             </div>
 

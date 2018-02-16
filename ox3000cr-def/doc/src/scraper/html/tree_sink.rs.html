@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/root/.cargo/registry/src/github.com-1ecc6299db9ec823/scraper-0.4.0/src/html/tree_sink.rs`.">
+    <meta name="description" content="Source to the Rust file `/root/.cargo/registry/src/github.com-1ecc6299db9ec823/scraper-0.5.0/src/html/tree_sink.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>tree_sink.rs.html -- source</title>
@@ -247,17 +247,37 @@
 <span id="191">191</span>
 <span id="192">192</span>
 <span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
+<span id="205">205</span>
+<span id="206">206</span>
+<span id="207">207</span>
+<span id="208">208</span>
+<span id="209">209</span>
+<span id="210">210</span>
+<span id="211">211</span>
+<span id="212">212</span>
+<span id="213">213</span>
+<span id="214">214</span>
 </pre><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">borrow</span>::<span class="ident">Cow</span>;
 
 <span class="kw">use</span> <span class="ident">ego_tree</span>::<span class="ident">NodeId</span>;
-<span class="kw">use</span> <span class="ident">html5ever</span>::<span class="ident">tree_builder</span>::{<span class="ident">TreeSink</span>, <span class="ident">QuirksMode</span>, <span class="ident">NodeOrText</span>};
+<span class="kw">use</span> <span class="ident">html5ever</span>::<span class="ident">tree_builder</span>::{<span class="ident">TreeSink</span>, <span class="ident">QuirksMode</span>, <span class="ident">NodeOrText</span>, <span class="ident">ElementFlags</span>};
 <span class="kw">use</span> <span class="ident">html5ever</span>::<span class="ident">Attribute</span>;
-<span class="kw">use</span> <span class="ident">string_cache</span>::<span class="ident">QualName</span>;
-<span class="kw">use</span> <span class="ident">tendril</span>::<span class="ident">StrTendril</span>;
-
+<span class="kw">use</span> <span class="ident">html5ever</span>::{<span class="ident">QualName</span>, <span class="ident">ExpandedName</span>};
+<span class="kw">use</span> <span class="ident">html5ever</span>::<span class="ident">tendril</span>::<span class="ident">StrTendril</span>;
 <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">Html</span>;
-<span class="kw">use</span> <span class="ident">node</span>::{<span class="ident">Node</span>, <span class="ident">Doctype</span>, <span class="ident">Comment</span>, <span class="ident">Text</span>, <span class="ident">Element</span>};
+<span class="kw">use</span> <span class="ident">node</span>::{<span class="ident">Node</span>, <span class="ident">Doctype</span>, <span class="ident">Comment</span>, <span class="ident">Text</span>, <span class="ident">Element</span>, <span class="ident">ProcessingInstruction</span>};
 
 <span class="doccomment">/// Note: does not support the `&lt;template&gt;` element.</span>
 <span class="kw">impl</span> <span class="ident">TreeSink</span> <span class="kw">for</span> <span class="ident">Html</span> {
@@ -282,20 +302,20 @@
     }
 
     <span class="comment">// Do two handles refer to the same node?</span>
-    <span class="kw">fn</span> <span class="ident">same_node</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">x</span>: <span class="self">Self</span>::<span class="ident">Handle</span>, <span class="ident">y</span>: <span class="self">Self</span>::<span class="ident">Handle</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">fn</span> <span class="ident">same_node</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">x</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">Handle</span>, <span class="ident">y</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">Handle</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
         <span class="ident">x</span> <span class="op">==</span> <span class="ident">y</span>
     }
 
     <span class="comment">// What is the name of this element?</span>
     <span class="comment">//</span>
     <span class="comment">// Should never be called on a non-element node; feel free to panic!.</span>
-    <span class="kw">fn</span> <span class="ident">elem_name</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">target</span>: <span class="self">Self</span>::<span class="ident">Handle</span>) <span class="op">-&gt;</span> <span class="ident">QualName</span> {
-        <span class="self">self</span>.<span class="ident">tree</span>.<span class="ident">get</span>(<span class="ident">target</span>)
+    <span class="kw">fn</span> <span class="ident">elem_name</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">Handle</span>) <span class="op">-&gt;</span> <span class="ident">ExpandedName</span> {
+        <span class="self">self</span>.<span class="ident">tree</span>.<span class="ident">get</span>(<span class="kw-2">*</span><span class="ident">target</span>)
             .<span class="ident">value</span>()
             .<span class="ident">as_element</span>()
             .<span class="ident">unwrap</span>()
             .<span class="ident">name</span>
-            .<span class="ident">clone</span>()
+            .<span class="ident">expanded</span>()
     }
 
     <span class="comment">// Create an element.</span>
@@ -303,10 +323,12 @@
     <span class="comment">// When creating a template element (name == qualname!(html, &quot;template&quot;)), an associated</span>
     <span class="comment">// document fragment called the &quot;template contents&quot; should also be created. Later calls to</span>
     <span class="comment">// self.get_template_contents() with that given element return it.</span>
-    <span class="kw">fn</span> <span class="ident">create_element</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">name</span>: <span class="ident">QualName</span>, <span class="ident">attrs</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Attribute</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Handle</span> {
-        <span class="kw">let</span> <span class="ident">attrs</span> <span class="op">=</span> <span class="ident">attrs</span>.<span class="ident">into_iter</span>()
-            .<span class="ident">map</span>(<span class="op">|</span><span class="ident">a</span><span class="op">|</span> (<span class="ident">a</span>.<span class="ident">name</span>, <span class="ident">a</span>.<span class="ident">value</span>))
-            .<span class="ident">collect</span>();
+    <span class="kw">fn</span> <span class="ident">create_element</span>(
+        <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>,
+        <span class="ident">name</span>: <span class="ident">QualName</span>,
+        <span class="ident">attrs</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Attribute</span><span class="op">&gt;</span>,
+        <span class="ident">_flags</span>: <span class="ident">ElementFlags</span>,
+    ) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Handle</span> {
         <span class="self">self</span>.<span class="ident">tree</span>.<span class="ident">orphan</span>(<span class="ident">Node</span>::<span class="ident">Element</span>(<span class="ident">Element</span>::<span class="ident">new</span>(<span class="ident">name</span>, <span class="ident">attrs</span>))).<span class="ident">id</span>()
     }
 
@@ -334,8 +356,8 @@
     <span class="comment">// text nodes, it should concatenate the text instead.</span>
     <span class="comment">//</span>
     <span class="comment">// The child node will not already have a parent.</span>
-    <span class="kw">fn</span> <span class="ident">append</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">parent</span>: <span class="self">Self</span>::<span class="ident">Handle</span>, <span class="ident">child</span>: <span class="ident">NodeOrText</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Handle</span><span class="op">&gt;</span>) {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">parent</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">tree</span>.<span class="ident">get_mut</span>(<span class="ident">parent</span>);
+    <span class="kw">fn</span> <span class="ident">append</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">parent</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">Handle</span>, <span class="ident">child</span>: <span class="ident">NodeOrText</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Handle</span><span class="op">&gt;</span>) {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">parent</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">tree</span>.<span class="ident">get_mut</span>(<span class="kw-2">*</span><span class="ident">parent</span>);
 
         <span class="kw">match</span> <span class="ident">child</span> {
             <span class="ident">NodeOrText</span>::<span class="ident">AppendNode</span>(<span class="ident">id</span>) <span class="op">=&gt;</span> {
@@ -355,7 +377,7 @@
                 } <span class="kw">else</span> {
                     <span class="ident">parent</span>.<span class="ident">append</span>(<span class="ident">Node</span>::<span class="ident">Text</span>(<span class="ident">Text</span> { <span class="ident">text</span>: <span class="ident">text</span> }));
                 }
-            },
+            }
         }
     }
 
@@ -369,57 +391,55 @@
     <span class="comment">// NB: new_node may have an old parent, from which it should be removed.</span>
     <span class="kw">fn</span> <span class="ident">append_before_sibling</span>(
         <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>,
-        <span class="ident">sibling</span>: <span class="self">Self</span>::<span class="ident">Handle</span>,
+        <span class="ident">sibling</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">Handle</span>,
         <span class="ident">new_node</span>: <span class="ident">NodeOrText</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Handle</span><span class="op">&gt;</span>
-    ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">NodeOrText</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Handle</span><span class="op">&gt;&gt;</span> {
+    ) {
         <span class="kw">if</span> <span class="kw">let</span> <span class="ident">NodeOrText</span>::<span class="ident">AppendNode</span>(<span class="ident">id</span>) <span class="op">=</span> <span class="ident">new_node</span> {
             <span class="self">self</span>.<span class="ident">tree</span>.<span class="ident">get_mut</span>(<span class="ident">id</span>).<span class="ident">detach</span>();
         }
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">sibling</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">tree</span>.<span class="ident">get_mut</span>(<span class="ident">sibling</span>);
-        <span class="kw">if</span> <span class="ident">sibling</span>.<span class="ident">parent</span>().<span class="ident">is_none</span>() {
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">new_node</span>);
-        }
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">sibling</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">tree</span>.<span class="ident">get_mut</span>(<span class="kw-2">*</span><span class="ident">sibling</span>);
+        <span class="kw">if</span> <span class="op">!</span><span class="ident">sibling</span>.<span class="ident">parent</span>().<span class="ident">is_none</span>() {
+            <span class="kw">match</span> <span class="ident">new_node</span> {
+                <span class="ident">NodeOrText</span>::<span class="ident">AppendNode</span>(<span class="ident">id</span>) <span class="op">=&gt;</span> <span class="kw">unsafe</span> {
+                    <span class="ident">sibling</span>.<span class="ident">insert_id_before</span>(<span class="ident">id</span>);
+                },
 
-        <span class="kw">match</span> <span class="ident">new_node</span> {
-            <span class="ident">NodeOrText</span>::<span class="ident">AppendNode</span>(<span class="ident">id</span>) <span class="op">=&gt;</span> {
-                <span class="kw">unsafe</span> { <span class="ident">sibling</span>.<span class="ident">insert_id_before</span>(<span class="ident">id</span>); }
-            },
+                <span class="ident">NodeOrText</span>::<span class="ident">AppendText</span>(<span class="ident">text</span>) <span class="op">=&gt;</span> {
+                    <span class="kw">let</span> <span class="ident">can_concat</span> <span class="op">=</span> <span class="ident">sibling</span>.<span class="ident">prev_sibling</span>().<span class="ident">map_or</span>(
+                        <span class="bool-val">false</span>,
+                        <span class="op">|</span><span class="kw-2">mut</span> <span class="ident">n</span><span class="op">|</span> <span class="ident">n</span>.<span class="ident">value</span>().<span class="ident">is_text</span>(),
+                    );
 
-            <span class="ident">NodeOrText</span>::<span class="ident">AppendText</span>(<span class="ident">text</span>) <span class="op">=&gt;</span> {
-                <span class="kw">let</span> <span class="ident">can_concat</span> <span class="op">=</span> <span class="ident">sibling</span>.<span class="ident">prev_sibling</span>()
-                    .<span class="ident">map_or</span>(<span class="bool-val">false</span>, <span class="op">|</span><span class="kw-2">mut</span> <span class="ident">n</span><span class="op">|</span> <span class="ident">n</span>.<span class="ident">value</span>().<span class="ident">is_text</span>());
-
-                <span class="kw">if</span> <span class="ident">can_concat</span> {
-                    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">prev_sibling</span> <span class="op">=</span> <span class="ident">sibling</span>.<span class="ident">prev_sibling</span>().<span class="ident">unwrap</span>();
-                    <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">prev_sibling</span>.<span class="ident">value</span>() {
-                        <span class="ident">Node</span>::<span class="ident">Text</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">t</span>) <span class="op">=&gt;</span> <span class="ident">t</span>.<span class="ident">text</span>.<span class="ident">push_tendril</span>(<span class="kw-2">&amp;</span><span class="ident">text</span>),
-                        _ <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+                    <span class="kw">if</span> <span class="ident">can_concat</span> {
+                        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">prev_sibling</span> <span class="op">=</span> <span class="ident">sibling</span>.<span class="ident">prev_sibling</span>().<span class="ident">unwrap</span>();
+                        <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">prev_sibling</span>.<span class="ident">value</span>() {
+                            <span class="ident">Node</span>::<span class="ident">Text</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">t</span>) <span class="op">=&gt;</span> <span class="ident">t</span>.<span class="ident">text</span>.<span class="ident">push_tendril</span>(<span class="kw-2">&amp;</span><span class="ident">text</span>),
+                            _ <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+                        }
+                    } <span class="kw">else</span> {
+                        <span class="ident">sibling</span>.<span class="ident">insert_before</span>(<span class="ident">Node</span>::<span class="ident">Text</span>(<span class="ident">Text</span> { <span class="ident">text</span>: <span class="ident">text</span> }));
                     }
-                } <span class="kw">else</span> {
-                    <span class="ident">sibling</span>.<span class="ident">insert_before</span>(<span class="ident">Node</span>::<span class="ident">Text</span>(<span class="ident">Text</span> { <span class="ident">text</span>: <span class="ident">text</span> }));
                 }
-            },
+            }
         }
-
-        <span class="prelude-val">Ok</span>(())
     }
 
     <span class="comment">// Detach the given node from its parent.</span>
-    <span class="kw">fn</span> <span class="ident">remove_from_parent</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">target</span>: <span class="self">Self</span>::<span class="ident">Handle</span>) {
-        <span class="self">self</span>.<span class="ident">tree</span>.<span class="ident">get_mut</span>(<span class="ident">target</span>).<span class="ident">detach</span>();
+    <span class="kw">fn</span> <span class="ident">remove_from_parent</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">Handle</span>) {
+        <span class="self">self</span>.<span class="ident">tree</span>.<span class="ident">get_mut</span>(<span class="kw-2">*</span><span class="ident">target</span>).<span class="ident">detach</span>();
     }
 
     <span class="comment">// Remove all the children from node and append them to new_parent.</span>
-    <span class="kw">fn</span> <span class="ident">reparent_children</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">node</span>: <span class="self">Self</span>::<span class="ident">Handle</span>, <span class="ident">new_parent</span>: <span class="self">Self</span>::<span class="ident">Handle</span>) {
-        <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="ident">tree</span>.<span class="ident">get_mut</span>(<span class="ident">new_parent</span>).<span class="ident">reparent_from_id_append</span>(<span class="ident">node</span>); }
+    <span class="kw">fn</span> <span class="ident">reparent_children</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">node</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">Handle</span>, <span class="ident">new_parent</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">Handle</span>) {
+        <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="ident">tree</span>.<span class="ident">get_mut</span>(<span class="kw-2">*</span><span class="ident">new_parent</span>).<span class="ident">reparent_from_id_append</span>(<span class="kw-2">*</span><span class="ident">node</span>); }
     }
 
     <span class="comment">// Add each attribute to the given element, if no attribute with that name already exists. The</span>
     <span class="comment">// tree builder promises this will never be called with something else than an element.</span>
-    <span class="kw">fn</span> <span class="ident">add_attrs_if_missing</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">target</span>: <span class="self">Self</span>::<span class="ident">Handle</span>, <span class="ident">attrs</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Attribute</span><span class="op">&gt;</span>) {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">node</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">tree</span>.<span class="ident">get_mut</span>(<span class="ident">target</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">element</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">node</span>.<span class="ident">value</span>() {
+    <span class="kw">fn</span> <span class="ident">add_attrs_if_missing</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">Handle</span>, <span class="ident">attrs</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Attribute</span><span class="op">&gt;</span>) {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">node</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">tree</span>.<span class="ident">get_mut</span>(<span class="kw-2">*</span><span class="ident">target</span>);
+        <span class="kw">let</span> <span class="ident">element</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">node</span>.<span class="ident">value</span>() {
             <span class="ident">Node</span>::<span class="ident">Element</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">e</span>) <span class="op">=&gt;</span> <span class="ident">e</span>,
             _ <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
         };
@@ -433,12 +453,34 @@
     <span class="comment">//</span>
     <span class="comment">// The tree builder promises this will never be called with something else than a template</span>
     <span class="comment">// element.</span>
-    <span class="kw">fn</span> <span class="ident">get_template_contents</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">_target</span>: <span class="self">Self</span>::<span class="ident">Handle</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Handle</span> {
+    <span class="kw">fn</span> <span class="ident">get_template_contents</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_target</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">Handle</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Handle</span> {
         <span class="macro">unimplemented</span><span class="macro">!</span>()
     }
 
     <span class="comment">// Mark a HTML &lt;script&gt; element as &quot;already started&quot;.</span>
-    <span class="kw">fn</span> <span class="ident">mark_script_already_started</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_node</span>: <span class="self">Self</span>::<span class="ident">Handle</span>) {
+    <span class="kw">fn</span> <span class="ident">mark_script_already_started</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_node</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">Handle</span>) {
+    }
+
+    <span class="comment">// Create Processing Instruction.</span>
+    <span class="kw">fn</span> <span class="ident">create_pi</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">target</span>: <span class="ident">StrTendril</span>, <span class="ident">data</span>: <span class="ident">StrTendril</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Handle</span> {
+        <span class="self">self</span>.<span class="ident">tree</span>
+            .<span class="ident">orphan</span>(<span class="ident">Node</span>::<span class="ident">ProcessingInstruction</span>(
+                <span class="ident">ProcessingInstruction</span> { <span class="ident">target</span>, <span class="ident">data</span> },
+            ))
+            .<span class="ident">id</span>()
+    }
+
+    <span class="kw">fn</span> <span class="ident">append_based_on_parent_node</span>(
+        <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>,
+        <span class="ident">element</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">Handle</span>,
+        <span class="ident">prev_element</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">Handle</span>,
+        <span class="ident">child</span>: <span class="ident">NodeOrText</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Handle</span><span class="op">&gt;</span>,
+    ) {
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">tree</span>.<span class="ident">get</span>(<span class="kw-2">*</span><span class="ident">element</span>).<span class="ident">parent</span>().<span class="ident">is_some</span>() {
+            <span class="self">self</span>.<span class="ident">append_before_sibling</span>(<span class="ident">element</span>, <span class="ident">child</span>)
+        } <span class="kw">else</span> {
+            <span class="self">self</span>.<span class="ident">append</span>(<span class="ident">prev_element</span>, <span class="ident">child</span>)
+        }
     }
 }
 </pre>

@@ -33,7 +33,7 @@
     <nav class="sidebar">
         <div class="sidebar-menu">&#9776;</div>
         
-        <p class='location'>Crate utf8</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#constants">Constants</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'utf8', ty: 'mod', relpath: '../'};</script></div>
+        <p class='location'>Crate utf8</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#constants">Constants</a></li><li><a href="#functions">Functions</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'utf8', ty: 'mod', relpath: '../'};</script></div>
     </nav>
 
     <div class="theme-picker">
@@ -59,24 +59,14 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/utf8/lib.rs.html#1-448' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../src/utf8/lib.rs.html#1-134' title='goto source code'>[src]</a></span></h1>
 <h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class="struct" href="struct.Decoder.html"
-                                  title='struct utf8::Decoder'>Decoder</a></td>
+                           <td><a class="struct" href="struct.Incomplete.html"
+                                  title='struct utf8::Incomplete'>Incomplete</a></td>
                            <td class='docblock-short'>
-                                <p>A low-level, zero-copy UTF-8 decoder with error handling.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.InlineString.html"
-                                  title='struct utf8::InlineString'>InlineString</a></td>
-                           <td class='docblock-short'>
-                                <p>Like <code>String</code>, but does not allocate memory and has a fixed capacity of 4 bytes.
-This is used by <code>Decoder</code> to represent either the empty string or a single code point.</p>
-
+                                
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -90,8 +80,8 @@ Errors are replaced with the U+FFFD replacement character.</p>
                        </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class="enum" href="enum.Result.html"
-                                  title='enum utf8::Result'>Result</a></td>
+                           <td><a class="enum" href="enum.DecodeError.html"
+                                  title='enum utf8::DecodeError'>DecodeError</a></td>
                            <td class='docblock-short'>
                                 
                            </td>
@@ -103,6 +93,14 @@ Errors are replaced with the U+FFFD replacement character.</p>
                            <td class='docblock-short'>
                                 <p>The replacement character, U+FFFD. In lossy decoding, insert it for every decoding error.</p>
 
+                           </td>
+                       </tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.decode.html"
+                                  title='fn utf8::decode'>decode</a></td>
+                           <td class='docblock-short'>
+                                
                            </td>
                        </tr></table></section>
     <section id='search' class="content hidden"></section>

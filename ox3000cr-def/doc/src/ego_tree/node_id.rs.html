@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/root/.cargo/registry/src/github.com-1ecc6299db9ec823/ego-tree-0.1.1/src/node_id.rs`.">
+    <meta name="description" content="Source to the Rust file `/root/.cargo/registry/src/github.com-1ecc6299db9ec823/ego-tree-0.2.0/src/node_id.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>node_id.rs.html -- source</title>
@@ -69,10 +69,28 @@
 <span id="13">13</span>
 <span id="14">14</span>
 <span id="15">15</span>
+<span id="16">16</span>
+<span id="17">17</span>
+<span id="18">18</span>
+<span id="19">19</span>
+<span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
 </pre><pre class="rust ">
 <span class="attribute">#![<span class="ident">allow</span>(<span class="ident">expl_impl_clone_on_copy</span>)]</span>
 
 <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">NodeId</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">hash</span>::<span class="ident">Hash</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">hash</span>::<span class="ident">Hasher</span>;
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Hash</span> <span class="kw">for</span> <span class="ident">NodeId</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">hash</span><span class="op">&lt;</span><span class="ident">H</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">state</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">H</span>) <span class="kw">where</span> <span class="ident">H</span>: <span class="ident">Hasher</span> {
+        <span class="ident">state</span>.<span class="ident">write_usize</span>(<span class="self">self</span>.<span class="ident">tree_id</span>);
+        <span class="ident">state</span>.<span class="ident">write_usize</span>(<span class="self">self</span>.<span class="ident">index</span>);
+    }
+}
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Copy</span> <span class="kw">for</span> <span class="ident">NodeId</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> { }
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Clone</span> <span class="kw">for</span> <span class="ident">NodeId</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {

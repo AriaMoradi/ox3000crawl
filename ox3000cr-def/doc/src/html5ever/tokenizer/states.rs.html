@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/root/.cargo/registry/src/github.com-1ecc6299db9ec823/html5ever-0.5.4/src/tokenizer/states.rs`.">
+    <meta name="description" content="Source to the Rust file `/root/.cargo/registry/src/github.com-1ecc6299db9ec823/html5ever-0.21.0/src/tokenizer/states.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>states.rs.html -- source</title>
@@ -146,8 +146,9 @@
 <span id="90">90</span>
 <span id="91">91</span>
 <span id="92">92</span>
+<span id="93">93</span>
 </pre><pre class="rust ">
-<span class="comment">// Copyright 2014 The html5ever Project Developers. See the</span>
+<span class="comment">// Copyright 2014-2017 The html5ever Project Developers. See the</span>
 <span class="comment">// COPYRIGHT file at the top-level directory of this distribution.</span>
 <span class="comment">//</span>
 <span class="comment">// Licensed under the Apache License, Version 2.0 &lt;LICENSE-APACHE or</span>
@@ -237,7 +238,8 @@
     <span class="ident">BetweenDoctypePublicAndSystemIdentifiers</span>,
     <span class="ident">BogusDoctype</span>,
     <span class="ident">CdataSection</span>,
-    <span class="ident">Quiescent</span>,
+    <span class="ident">CdataSectionBracket</span>,
+    <span class="ident">CdataSectionEnd</span>,
 }
 </pre>
 </section>

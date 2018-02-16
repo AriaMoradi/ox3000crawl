@@ -10,8 +10,11 @@
     <title>markup5ever::rcdom::Handle - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../main.css">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../../dark.css">
+    <link rel="stylesheet" type="text/css" href="../../main.css" id="themeStyle">
+    <script src="../../storage.js"></script>
     
 
     
@@ -33,6 +36,13 @@
         <p class='location'>Type Definition Handle</p><div class="sidebar-elems"><div class="block items"><a class="sidebar-title" href="#implementations">Trait Implementations</a><div class="sidebar-links"><a href="#impl-Serialize">Serialize</a></div></div><p class='location'><a href='../index.html'>markup5ever</a>::<wbr><a href='index.html'>rcdom</a></p><script>window.sidebarCurrent = {name: 'Handle', ty: 'type', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
     </nav>
 
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../../theme.js"></script>
     <nav class="sub">
         <form class="search-form js-only">
             <div class="search-container">
@@ -55,8 +65,8 @@
             <h2 id='implementations' class='small-section-header'>
               Trait Implementations<a href='#implementations' class='anchor'></a>
             </h2>
-        <h3 id='impl-Serialize' class='impl'><span class='in-band'><code>impl <a class="trait" href="../../markup5ever/serialize/trait.Serialize.html" title="trait markup5ever::serialize::Serialize">Serialize</a> for <a class="type" href="../../markup5ever/rcdom/type.Handle.html" title="type markup5ever::rcdom::Handle">Handle</a></code><a href='#impl-Serialize' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/markup5ever/rcdom.rs.html#338-384' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.serialize' class="method"><span id='serialize.v' class='invisible'><code>fn <a href='../../markup5ever/serialize/trait.Serialize.html#tymethod.serialize' class='fnname'>serialize</a>&lt;S&gt;(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;serializer: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;mut </a>S, <br>&nbsp;&nbsp;&nbsp;&nbsp;traversal_scope: <a class="enum" href="../../markup5ever/serialize/enum.TraversalScope.html" title="enum markup5ever::serialize::TraversalScope">TraversalScope</a><br>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/std/io/error/type.Result.html" title="type std::io::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;S: <a class="trait" href="../../markup5ever/serialize/trait.Serializer.html" title="trait markup5ever::serialize::Serializer">Serializer</a>,&nbsp;</span></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/markup5ever/rcdom.rs.html#339-383' title='goto source code'>[src]</a></span></h4>
+        <h3 id='impl-Serialize' class='impl'><span class='in-band'><code>impl <a class="trait" href="../../markup5ever/serialize/trait.Serialize.html" title="trait markup5ever::serialize::Serialize">Serialize</a> for <a class="type" href="../../markup5ever/rcdom/type.Handle.html" title="type markup5ever::rcdom::Handle">Handle</a></code><a href='#impl-Serialize' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/markup5ever/rcdom.rs.html#334-380' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.serialize' class="method"><span id='serialize.v' class='invisible'><code>fn <a href='../../markup5ever/serialize/trait.Serialize.html#tymethod.serialize' class='fnname'>serialize</a>&lt;S&gt;(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;serializer: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;mut </a>S, <br>&nbsp;&nbsp;&nbsp;&nbsp;traversal_scope: <a class="enum" href="../../markup5ever/serialize/enum.TraversalScope.html" title="enum markup5ever::serialize::TraversalScope">TraversalScope</a><br>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/std/io/error/type.Result.html" title="type std::io::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;S: <a class="trait" href="../../markup5ever/serialize/trait.Serializer.html" title="trait markup5ever::serialize::Serializer">Serializer</a>,&nbsp;</span></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/markup5ever/rcdom.rs.html#335-379' title='goto source code'>[src]</a></span></h4>
 </div></section>
     <section id='search' class="content hidden"></section>
 
@@ -70,20 +80,22 @@
                 <h2>Keyboard Shortcuts</h2>
 
                 <dl>
-                    <dt>?</dt>
+                    <dt><kbd>?</kbd></dt>
                     <dd>Show this help dialog</dd>
-                    <dt>S</dt>
+                    <dt><kbd>S</kbd></dt>
                     <dd>Focus the search field</dd>
-                    <dt>↑</dt>
+                    <dt><kbd>↑</kbd></dt>
                     <dd>Move up in search results</dd>
-                    <dt>↓</dt>
+                    <dt><kbd>↓</kbd></dt>
                     <dd>Move down in search results</dd>
-                    <dt>↹</dt>
+                    <dt><kbd>↹</kbd></dt>
                     <dd>Switch tab</dd>
-                    <dt>&#9166;</dt>
+                    <dt><kbd>&#9166;</kbd></dt>
                     <dd>Go to active search result</dd>
-                    <dt style="width:31px;">+ / -</dt>
-                    <dd>Collapse/expand all sections</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
                 </dl>
             </div>
 

@@ -59,92 +59,97 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/selectors/matching.rs.html#4-943' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../../src/selectors/matching.rs.html#5-596' title='goto source code'>[src]</a></span></h1>
 <h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class="struct" href="struct.CommonStyleAffectingAttributeInfo.html"
-                                  title='struct selectors::matching::CommonStyleAffectingAttributeInfo'>CommonStyleAffectingAttributeInfo</a></td>
+                           <td><a class="struct" href="struct.ElementSelectorFlags.html"
+                                  title='struct selectors::matching::ElementSelectorFlags'>ElementSelectorFlags</a></td>
                            <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.CommonStyleAffectingAttributes.html"
-                                  title='struct selectors::matching::CommonStyleAffectingAttributes'>CommonStyleAffectingAttributes</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.DeclarationBlock.html"
-                                  title='struct selectors::matching::DeclarationBlock'>DeclarationBlock</a></td>
-                           <td class='docblock-short'>
-                                <p>A property declaration together with its precedence among rules of equal specificity so that
-we can sort them.</p>
+                                <p>Set of flags that are set on either the element or its parent (depending
+on the flag) if the element could potentially match a selector.</p>
 
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class="struct" href="struct.ElementFlags.html"
-                                  title='struct selectors::matching::ElementFlags'>ElementFlags</a></td>
+                           <td><a class="struct" href="struct.MatchingContext.html"
+                                  title='struct selectors::matching::MatchingContext'>MatchingContext</a></td>
                            <td class='docblock-short'>
-                                <p>Flags set on elements during the matching process.</p>
+                                <p>Data associated with the matching process for a element.  This context is
+used across many selectors for an element, so it's not appropriate for
+transient data that applies to only a single selector.</p>
 
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class="struct" href="struct.Rule.html"
-                                  title='struct selectors::matching::Rule'>Rule</a></td>
+                           <td><a class="struct" href="struct.StyleRelations.html"
+                                  title='struct selectors::matching::StyleRelations'>StyleRelations</a></td>
                            <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.SelectorMap.html"
-                                  title='struct selectors::matching::SelectorMap'>SelectorMap</a></td>
-                           <td class='docblock-short'>
-                                <p>Map element data to Rules whose last simple selector starts with them.</p>
+                                <p>Set of flags that determine the different kind of elements affected by
+the selector matching process.</p>
 
                            </td>
                        </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class="enum" href="enum.CommonStyleAffectingAttributeMode.html"
-                                  title='enum selectors::matching::CommonStyleAffectingAttributeMode'>CommonStyleAffectingAttributeMode</a></td>
+                           <td><a class="enum" href="enum.MatchingMode.html"
+                                  title='enum selectors::matching::MatchingMode'>MatchingMode</a></td>
                            <td class='docblock-short'>
-                                
+                                <p>What kind of selector matching mode we should use.</p>
+
                            </td>
                        </tr></table><h2 id='constants' class='section-header'><a href="#constants">Constants</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class="constant" href="constant.ALIGN_CENTER_ATTRIBUTE.html"
-                                  title='constant selectors::matching::ALIGN_CENTER_ATTRIBUTE'>ALIGN_CENTER_ATTRIBUTE</a></td>
+                           <td><a class="constant" href="constant.AFFECTED_BY_ID_SELECTOR.html"
+                                  title='constant selectors::matching::AFFECTED_BY_ID_SELECTOR'>AFFECTED_BY_ID_SELECTOR</a></td>
                            <td class='docblock-short'>
-                                
+                                <p>Whether this element is affected by an ID selector.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class="constant" href="constant.ALIGN_LEFT_ATTRIBUTE.html"
-                                  title='constant selectors::matching::ALIGN_LEFT_ATTRIBUTE'>ALIGN_LEFT_ATTRIBUTE</a></td>
+                           <td><a class="constant" href="constant.AFFECTED_BY_PRESENTATIONAL_HINTS.html"
+                                  title='constant selectors::matching::AFFECTED_BY_PRESENTATIONAL_HINTS'>AFFECTED_BY_PRESENTATIONAL_HINTS</a></td>
                            <td class='docblock-short'>
-                                
+                                <p>Whether this element is affected by presentational hints. This is
+computed externally (that is, in Servo).</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class="constant" href="constant.ALIGN_RIGHT_ATTRIBUTE.html"
-                                  title='constant selectors::matching::ALIGN_RIGHT_ATTRIBUTE'>ALIGN_RIGHT_ATTRIBUTE</a></td>
+                           <td><a class="constant" href="constant.AFFECTED_BY_PSEUDO_ELEMENTS.html"
+                                  title='constant selectors::matching::AFFECTED_BY_PSEUDO_ELEMENTS'>AFFECTED_BY_PSEUDO_ELEMENTS</a></td>
                            <td class='docblock-short'>
-                                
+                                <p>Whether this element has pseudo-element styles. Computed externally.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.AFFECTED_BY_STYLE_ATTRIBUTE.html"
+                                  title='constant selectors::matching::AFFECTED_BY_STYLE_ATTRIBUTE'>AFFECTED_BY_STYLE_ATTRIBUTE</a></td>
+                           <td class='docblock-short'>
+                                <p>Whether this element has a style attribute. Computed
+externally.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
                            <td><a class="constant" href="constant.HAS_EDGE_CHILD_SELECTOR.html"
                                   title='constant selectors::matching::HAS_EDGE_CHILD_SELECTOR'>HAS_EDGE_CHILD_SELECTOR</a></td>
                            <td class='docblock-short'>
-                                <p>When a child is added or removed from this element, the first and last children
-must be restyled, because they may match :first-child, :last-child, or
-:only-child.</p>
+                                <p>When a child is added or removed from the parent, the first and
+last children must be restyled, because they may match :first-child,
+:last-child, or :only-child.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.HAS_EMPTY_SELECTOR.html"
+                                  title='constant selectors::matching::HAS_EMPTY_SELECTOR'>HAS_EMPTY_SELECTOR</a></td>
+                           <td class='docblock-short'>
+                                <p>The element has an empty selector, so when a child is appended we
+might need to restyle the parent completely.</p>
 
                            </td>
                        </tr>
@@ -152,9 +157,9 @@ must be restyled, because they may match :first-child, :last-child, or
                            <td><a class="constant" href="constant.HAS_SLOW_SELECTOR.html"
                                   title='constant selectors::matching::HAS_SLOW_SELECTOR'>HAS_SLOW_SELECTOR</a></td>
                            <td class='docblock-short'>
-                                <p>When a child is added or removed from this element, all the children must be
-restyled, because they may match :nth-last-child, :last-of-type,
-:nth-last-of-type, or :only-of-type.</p>
+                                <p>When a child is added or removed from the parent, all the children
+must be restyled, because they may match :nth-last-child,
+:last-of-type, :nth-last-of-type, or :only-of-type.</p>
 
                            </td>
                        </tr>
@@ -162,23 +167,10 @@ restyled, because they may match :nth-last-child, :last-of-type,
                            <td><a class="constant" href="constant.HAS_SLOW_SELECTOR_LATER_SIBLINGS.html"
                                   title='constant selectors::matching::HAS_SLOW_SELECTOR_LATER_SIBLINGS'>HAS_SLOW_SELECTOR_LATER_SIBLINGS</a></td>
                            <td class='docblock-short'>
-                                <p>When a child is added or removed from this element, any later children must be
-restyled, because they may match :nth-child, :first-of-type, or :nth-of-type.</p>
+                                <p>When a child is added or removed from the parent, any later
+children must be restyled, because they may match :nth-child,
+:first-of-type, or :nth-of-type.</p>
 
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="constant" href="constant.HIDDEN_ATTRIBUTE.html"
-                                  title='constant selectors::matching::HIDDEN_ATTRIBUTE'>HIDDEN_ATTRIBUTE</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="constant" href="constant.NO_WRAP_ATTRIBUTE.html"
-                                  title='constant selectors::matching::NO_WRAP_ATTRIBUTE'>NO_WRAP_ATTRIBUTE</a></td>
-                           <td class='docblock-short'>
-                                
                            </td>
                        </tr></table><h2 id='statics' class='section-header'><a href="#statics">Statics</a></h2>
 <table>
@@ -188,54 +180,29 @@ restyled, because they may match :nth-child, :first-of-type, or :nth-of-type.</p
                            <td class='docblock-short'>
                                 
                            </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="static" href="static.SELECTOR_WHITESPACE.html"
-                                  title='static selectors::matching::SELECTOR_WHITESPACE'>SELECTOR_WHITESPACE</a></td>
-                           <td class='docblock-short'>
-                                <p>The definition of whitespace per CSS Selectors Level 3 § 4.</p>
-
-                           </td>
                        </tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class="fn" href="fn.common_style_affecting_attributes.html"
-                                  title='fn selectors::matching::common_style_affecting_attributes'>common_style_affecting_attributes</a></td>
+                           <td><a class="fn" href="fn.matches_complex_selector.html"
+                                  title='fn selectors::matching::matches_complex_selector'>matches_complex_selector</a></td>
+                           <td class='docblock-short'>
+                                <p>Matches a complex selector.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.matches_selector.html"
+                                  title='fn selectors::matching::matches_selector'>matches_selector</a></td>
+                           <td class='docblock-short'>
+                                <p>Matches an inner selector.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.matches_selector_list.html"
+                                  title='fn selectors::matching::matches_selector_list'>matches_selector_list</a></td>
                            <td class='docblock-short'>
                                 
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.matches.html"
-                                  title='fn selectors::matching::matches'>matches</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.matches_compound_selector.html"
-                                  title='fn selectors::matching::matches_compound_selector'>matches_compound_selector</a></td>
-                           <td class='docblock-short'>
-                                <p>Determines whether the given element matches the given single or compound selector.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.matches_simple_selector.html"
-                                  title='fn selectors::matching::matches_simple_selector'>matches_simple_selector</a></td>
-                           <td class='docblock-short'>
-                                <p>Determines whether the given element matches the given single selector.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.rare_style_affecting_attributes.html"
-                                  title='fn selectors::matching::rare_style_affecting_attributes'>rare_style_affecting_attributes</a></td>
-                           <td class='docblock-short'>
-                                <p>Attributes that, if present, disable style sharing. All legacy HTML attributes must be in
-either this list or <code>common_style_affecting_attributes</code>. See the comment in
-<code>synthesize_presentational_hints_for_legacy_attributes</code>.</p>
-
                            </td>
                        </tr></table></section>
     <section id='search' class="content hidden"></section>

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/root/.cargo/registry/src/github.com-1ecc6299db9ec823/cssparser-0.5.8/src/parser.rs`.">
+    <meta name="description" content="Source to the Rust file `/root/.cargo/registry/src/github.com-1ecc6299db9ec823/cssparser-0.13.7/src/parser.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>parser.rs.html -- source</title>
@@ -759,6 +759,11 @@
 <span id="703">703</span>
 <span id="704">704</span>
 <span id="705">705</span>
+<span id="706">706</span>
+<span id="707">707</span>
+<span id="708">708</span>
+<span id="709">709</span>
+<span id="710">710</span>
 </pre><pre class="rust ">
 <span class="comment">/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -784,12 +789,10 @@
 }
 
 
-<span class="doccomment">/// Like std::borrow::Cow, except:</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// * The Owned variant is boxed</span>
-<span class="doccomment">/// * The Borrowed variant contains a mutable reference.</span>
+<span class="doccomment">/// Like std::borrow::Cow, except the borrowed variant contains a mutable</span>
+<span class="doccomment">/// reference.</span>
 <span class="kw">enum</span> <span class="ident">MaybeOwned</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span>: <span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
-    <span class="ident">Owned</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>),
+    <span class="ident">Owned</span>(<span class="ident">T</span>),
     <span class="ident">Borrowed</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">T</span>),
 }
 
@@ -798,7 +801,7 @@
 
     <span class="kw">fn</span> <span class="ident">deref</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">T</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">MaybeOwned</span>::<span class="ident">Owned</span>(<span class="kw-2">ref</span> <span class="ident">pointer</span>) <span class="op">=&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="kw-2">*</span><span class="ident">pointer</span>,
+            <span class="ident">MaybeOwned</span>::<span class="ident">Owned</span>(<span class="kw-2">ref</span> <span class="ident">t</span>) <span class="op">=&gt;</span> <span class="ident">t</span>,
             <span class="ident">MaybeOwned</span>::<span class="ident">Borrowed</span>(<span class="kw-2">ref</span> <span class="ident">pointer</span>) <span class="op">=&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="kw-2">*</span><span class="ident">pointer</span>,
         }
     }
@@ -807,7 +810,7 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">ops</span>::<span class="ident">DerefMut</span> <span class="kw">for</span> <span class="ident">MaybeOwned</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">deref_mut</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="kw-2">mut</span> <span class="ident">T</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">MaybeOwned</span>::<span class="ident">Owned</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">pointer</span>) <span class="op">=&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="kw-2">*</span><span class="ident">pointer</span>,
+            <span class="ident">MaybeOwned</span>::<span class="ident">Owned</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">t</span>) <span class="op">=&gt;</span> <span class="ident">t</span>,
             <span class="ident">MaybeOwned</span>::<span class="ident">Borrowed</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">pointer</span>) <span class="op">=&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="kw-2">*</span><span class="ident">pointer</span>,
         }
     }
@@ -815,7 +818,7 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Clone</span> <span class="kw">for</span> <span class="ident">MaybeOwned</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="ident">T</span>: <span class="ident">Clone</span> {
     <span class="kw">fn</span> <span class="ident">clone</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">MaybeOwned</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span> {
-        <span class="ident">MaybeOwned</span>::<span class="ident">Owned</span>(<span class="ident">Box</span>::<span class="ident">new</span>((<span class="kw-2">*</span><span class="kw-2">*</span><span class="self">self</span>).<span class="ident">clone</span>()))
+        <span class="ident">MaybeOwned</span>::<span class="ident">Owned</span>((<span class="kw-2">*</span><span class="kw-2">*</span><span class="self">self</span>).<span class="ident">clone</span>())
     }
 }
 
@@ -933,7 +936,7 @@
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;i</span> <span class="ident">str</span>) <span class="op">-&gt;</span> <span class="ident">Parser</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span>, <span class="lifetime">&#39;i</span><span class="op">&gt;</span> {
         <span class="ident">Parser</span> {
-            <span class="ident">tokenizer</span>: <span class="ident">MaybeOwned</span>::<span class="ident">Owned</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">Tokenizer</span>::<span class="ident">new</span>(<span class="ident">input</span>))),
+            <span class="ident">tokenizer</span>: <span class="ident">MaybeOwned</span>::<span class="ident">Owned</span>(<span class="ident">Tokenizer</span>::<span class="ident">new</span>(<span class="ident">input</span>)),
             <span class="ident">at_start_of</span>: <span class="prelude-val">None</span>,
             <span class="ident">stop_before</span>: <span class="ident">Delimiter</span>::<span class="prelude-val">None</span>,
         }
@@ -1453,15 +1456,22 @@
 }
 
 
-<span class="doccomment">/// Return value indicates whether the end of the input was reached.</span>
 <span class="kw">fn</span> <span class="ident">consume_until_end_of_block</span>(<span class="ident">block_type</span>: <span class="ident">BlockType</span>, <span class="ident">tokenizer</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Tokenizer</span>) {
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">stack</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="ident">block_type</span>];
+
     <span class="comment">// FIXME: have a special-purpose tokenizer method for this that does less work.</span>
     <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="kw-2">ref</span> <span class="ident">token</span>) <span class="op">=</span> <span class="ident">tokenizer</span>.<span class="ident">next</span>() {
-        <span class="kw">if</span> <span class="ident">BlockType</span>::<span class="ident">closing</span>(<span class="ident">token</span>) <span class="op">==</span> <span class="prelude-val">Some</span>(<span class="ident">block_type</span>) {
-            <span class="kw">return</span>
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">b</span>) <span class="op">=</span> <span class="ident">BlockType</span>::<span class="ident">closing</span>(<span class="ident">token</span>) {
+            <span class="kw">if</span> <span class="kw-2">*</span><span class="ident">stack</span>.<span class="ident">last</span>().<span class="ident">unwrap</span>() <span class="op">==</span> <span class="ident">b</span> {
+                <span class="ident">stack</span>.<span class="ident">pop</span>();
+                <span class="kw">if</span> <span class="ident">stack</span>.<span class="ident">is_empty</span>() {
+                    <span class="kw">return</span>;
+                }
+            }
         }
+
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">block_type</span>) <span class="op">=</span> <span class="ident">BlockType</span>::<span class="ident">opening</span>(<span class="ident">token</span>) {
-            <span class="ident">consume_until_end_of_block</span>(<span class="ident">block_type</span>, <span class="ident">tokenizer</span>);
+            <span class="ident">stack</span>.<span class="ident">push</span>(<span class="ident">block_type</span>);
         }
     }
 }

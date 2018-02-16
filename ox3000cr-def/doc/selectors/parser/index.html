@@ -59,21 +59,26 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/selectors/parser.rs.html#5-895' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../../src/selectors/parser.rs.html#5-2165' title='goto source code'>[src]</a></span></h1>
 <h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class="struct" href="struct.AttrSelector.html"
-                                  title='struct selectors::parser::AttrSelector'>AttrSelector</a></td>
+                           <td><a class="struct" href="struct.AncestorIter.html"
+                                  title='struct selectors::parser::AncestorIter'>AncestorIter</a></td>
                            <td class='docblock-short'>
-                                
+                                <p>An iterator over all simple selectors belonging to ancestors.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class="struct" href="struct.CompoundSelector.html"
-                                  title='struct selectors::parser::CompoundSelector'>CompoundSelector</a></td>
+                           <td><a class="struct" href="struct.ComplexSelector.html"
+                                  title='struct selectors::parser::ComplexSelector'>ComplexSelector</a></td>
                            <td class='docblock-short'>
-                                
+                                <p>A ComplexSelectors stores a sequence of simple selectors and combinators. The
+iterator classes allow callers to iterate at either the raw sequence level or
+at the level of sequences of simple selectors separated by combinators. Most
+callers want the higher-level iterator.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -84,27 +89,39 @@
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class="struct" href="struct.ParserContext.html"
-                                  title='struct selectors::parser::ParserContext'>ParserContext</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
                            <td><a class="struct" href="struct.Selector.html"
                                   title='struct selectors::parser::Selector'>Selector</a></td>
                            <td class='docblock-short'>
                                 
                            </td>
-                       </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
-<table>
+                       </tr>
                        <tr class=' module-item'>
-                           <td><a class="enum" href="enum.CaseSensitivity.html"
-                                  title='enum selectors::parser::CaseSensitivity'>CaseSensitivity</a></td>
+                           <td><a class="struct" href="struct.SelectorInner.html"
+                                  title='struct selectors::parser::SelectorInner'>SelectorInner</a></td>
+                           <td class='docblock-short'>
+                                <p>The cores parts of a selector used for matching. This exists to make that
+information accessibly separately from the specificity and pseudo-element
+information that lives on |Selector| proper. We may want to refactor things
+and move that information elsewhere, at which point we could rename this
+to |Selector|.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.SelectorIter.html"
+                                  title='struct selectors::parser::SelectorIter'>SelectorIter</a></td>
                            <td class='docblock-short'>
                                 
                            </td>
                        </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.SelectorList.html"
+                                  title='struct selectors::parser::SelectorList'>SelectorList</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table>
                        <tr class=' module-item'>
                            <td><a class="enum" href="enum.Combinator.html"
                                   title='enum selectors::parser::Combinator'>Combinator</a></td>
@@ -113,20 +130,30 @@
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class="enum" href="enum.NamespaceConstraint.html"
-                                  title='enum selectors::parser::NamespaceConstraint'>NamespaceConstraint</a></td>
+                           <td><a class="enum" href="enum.Component.html"
+                                  title='enum selectors::parser::Component'>Component</a></td>
+                           <td class='docblock-short'>
+                                <p>A CSS simple selector or combinator. We store both in the same enum for
+optimal packing and cache performance, see [1].</p>
+
+                           </td>
+                       </tr></table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="trait" href="trait.Parser.html"
+                                  title='trait selectors::parser::Parser'>Parser</a></td>
                            <td class='docblock-short'>
                                 
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class="enum" href="enum.SimpleSelector.html"
-                                  title='enum selectors::parser::SimpleSelector'>SimpleSelector</a></td>
+                           <td><a class="trait" href="trait.PseudoElement.html"
+                                  title='trait selectors::parser::PseudoElement'>PseudoElement</a></td>
                            <td class='docblock-short'>
-                                
+                                <p>A trait that represents a pseudo-element.</p>
+
                            </td>
-                       </tr></table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
-<table>
+                       </tr>
                        <tr class=' module-item'>
                            <td><a class="trait" href="trait.SelectorImpl.html"
                                   title='trait selectors::parser::SelectorImpl'>SelectorImpl</a></td>
@@ -135,22 +162,20 @@
 of pseudo-classes/elements</p>
 
                            </td>
-                       </tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
-<table>
+                       </tr>
                        <tr class=' module-item'>
-                           <td><a class="fn" href="fn.parse_author_origin_selector_list_from_str.html"
-                                  title='fn selectors::parser::parse_author_origin_selector_list_from_str'>parse_author_origin_selector_list_from_str</a></td>
+                           <td><a class="trait" href="trait.SelectorMethods.html"
+                                  title='trait selectors::parser::SelectorMethods'>SelectorMethods</a></td>
                            <td class='docblock-short'>
                                 
                            </td>
-                       </tr>
+                       </tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
+<table>
                        <tr class=' module-item'>
-                           <td><a class="fn" href="fn.parse_selector_list.html"
-                                  title='fn selectors::parser::parse_selector_list'>parse_selector_list</a></td>
+                           <td><a class="fn" href="fn.namespace_empty_string.html"
+                                  title='fn selectors::parser::namespace_empty_string'>namespace_empty_string</a></td>
                            <td class='docblock-short'>
-                                <p>Parse a comma-separated list of Selectors.
-aka Selector Group in http://www.w3.org/TR/css3-selectors/#grouping</p>
-
+                                
                            </td>
                        </tr></table></section>
     <section id='search' class="content hidden"></section>

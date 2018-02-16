@@ -60,8 +60,9 @@
                        [<span class='inner'>&#x2212;</span>]
                    </a>
                </span></span></h1>
-<pre class='rust const'>pub const HAS_SLOW_SELECTOR_LATER_SIBLINGS: <a class="struct" href="../../selectors/matching/struct.ElementFlags.html" title="struct selectors::matching::ElementFlags">ElementFlags</a><code> = </code><code>ElementFlags{bits: 2,}</code></pre><div class='docblock'><p>When a child is added or removed from this element, any later children must be
-restyled, because they may match :nth-child, :first-of-type, or :nth-of-type.</p>
+<pre class='rust const'>pub const HAS_SLOW_SELECTOR_LATER_SIBLINGS: <a class="struct" href="../../selectors/matching/struct.ElementSelectorFlags.html" title="struct selectors::matching::ElementSelectorFlags">ElementSelectorFlags</a><code> = </code><code>ElementSelectorFlags{bits: 1 &lt;&lt; 1,}</code></pre><div class='docblock'><p>When a child is added or removed from the parent, any later
+children must be restyled, because they may match :nth-child,
+:first-of-type, or :nth-of-type.</p>
 </div></section>
     <section id='search' class="content hidden"></section>
 

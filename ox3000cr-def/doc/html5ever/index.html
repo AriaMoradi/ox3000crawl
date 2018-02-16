@@ -33,7 +33,7 @@
     <nav class="sidebar">
         <div class="sidebar-menu">&#9776;</div>
         
-        <p class='location'>Crate html5ever</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#reexports">Re-exports</a></li><li><a href="#modules">Modules</a></li><li><a href="#structs">Structs</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'html5ever', ty: 'mod', relpath: '../'};</script></div>
+        <p class='location'>Crate html5ever</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#reexports">Re-exports</a></li><li><a href="#modules">Modules</a></li><li><a href="#macros">Macros</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'html5ever', ty: 'mod', relpath: '../'};</script></div>
     </nav>
 
     <div class="theme-picker">
@@ -59,9 +59,9 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/html5ever/lib.rs.html#10-61' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../src/html5ever/lib.rs.html#10-35' title='goto source code'>[src]</a></span></h1>
 <h2 id='reexports' class='section-header'><a href="#reexports">Re-exports</a></h2>
-<table><tr><td><code>pub use driver::<a class="struct" href="../html5ever/driver/struct.ParseOpts.html" title="struct html5ever::driver::ParseOpts">ParseOpts</a>;</code></td></tr><tr><td><code>pub use driver::<a class="fn" href="../html5ever/driver/fn.parse_document.html" title="fn html5ever::driver::parse_document">parse_document</a>;</code></td></tr><tr><td><code>pub use driver::<a class="fn" href="../html5ever/driver/fn.parse_fragment.html" title="fn html5ever::driver::parse_fragment">parse_fragment</a>;</code></td></tr><tr><td><code>pub use driver::<a class="struct" href="../html5ever/driver/struct.Parser.html" title="struct html5ever::driver::Parser">Parser</a>;</code></td></tr><tr><td><code>pub use serialize::<a class="fn" href="../html5ever/serialize/fn.serialize.html" title="fn html5ever::serialize::serialize">serialize</a>;</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
+<table><tr><td><code>pub use <a class="mod" href="../markup5ever/index.html" title="mod markup5ever">markup5ever</a>::*;</code></td></tr><tr><td><code>pub use driver::<a class="struct" href="../html5ever/driver/struct.ParseOpts.html" title="struct html5ever::driver::ParseOpts">ParseOpts</a>;</code></td></tr><tr><td><code>pub use driver::<a class="fn" href="../html5ever/driver/fn.parse_document.html" title="fn html5ever::driver::parse_document">parse_document</a>;</code></td></tr><tr><td><code>pub use driver::<a class="fn" href="../html5ever/driver/fn.parse_fragment.html" title="fn html5ever::driver::parse_fragment">parse_fragment</a>;</code></td></tr><tr><td><code>pub use driver::<a class="struct" href="../html5ever/driver/struct.Parser.html" title="struct html5ever::driver::Parser">Parser</a>;</code></td></tr><tr><td><code>pub use serialize::<a class="fn" href="../html5ever/serialize/fn.serialize.html" title="fn html5ever::serialize::serialize">serialize</a>;</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
 <table>
                        <tr class=' module-item'>
                            <td><a class="mod" href="driver/index.html"
@@ -72,34 +72,10 @@
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class="mod" href="encoding/index.html"
-                                  title='mod html5ever::encoding'>encoding</a></td>
-                           <td class='docblock-short'>
-                                <p>Re-export the rust-encoding crate.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="mod" href="rcdom/index.html"
-                                  title='mod html5ever::rcdom'>rcdom</a></td>
-                           <td class='docblock-short'>
-                                <p>A simple reference-counted DOM.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
                            <td><a class="mod" href="serialize/index.html"
                                   title='mod html5ever::serialize'>serialize</a></td>
                            <td class='docblock-short'>
                                 
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="mod" href="tendril/index.html"
-                                  title='mod html5ever::tendril'>tendril</a></td>
-                           <td class='docblock-short'>
-                                <p>Re-export the tendril crate.</p>
-
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -117,14 +93,48 @@
                                 <p>The HTML5 tree builder.</p>
 
                            </td>
-                       </tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+                       </tr></table><h2 id='macros' class='section-header'><a href="#macros">Macros</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class="struct" href="struct.Attribute.html"
-                                  title='struct html5ever::Attribute'>Attribute</a></td>
+                           <td><a class="macro" href="macro.expanded_name.html"
+                                  title='macro html5ever::expanded_name'>expanded_name</a></td>
                            <td class='docblock-short'>
-                                <p>A tag attribute.</p>
-
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="macro" href="macro.local_name.html"
+                                  title='macro html5ever::local_name'>local_name</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="macro" href="macro.namespace_prefix.html"
+                                  title='macro html5ever::namespace_prefix'>namespace_prefix</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="macro" href="macro.namespace_url.html"
+                                  title='macro html5ever::namespace_url'>namespace_url</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="macro" href="macro.ns.html"
+                                  title='macro html5ever::ns'>ns</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="macro" href="macro.small_char_set.html"
+                                  title='macro html5ever::small_char_set'>small_char_set</a></td>
+                           <td class='docblock-short'>
+                                
                            </td>
                        </tr></table></section>
     <section id='search' class="content hidden"></section>

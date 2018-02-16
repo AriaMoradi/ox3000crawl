@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/root/.cargo/registry/src/github.com-1ecc6299db9ec823/scraper-0.4.0/src/lib.rs`.">
+    <meta name="description" content="Source to the Rust file `/root/.cargo/registry/src/github.com-1ecc6299db9ec823/scraper-0.5.0/src/lib.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>lib.rs.html -- source</title>
@@ -208,6 +208,7 @@
 <span id="152">152</span>
 <span id="153">153</span>
 <span id="154">154</span>
+<span id="155">155</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! HTML parsing and querying with CSS selectors.</span>
 <span class="doccomment">//!</span>
@@ -346,12 +347,13 @@
     <span class="ident">variant_size_differences</span>
 )]</span>
 
+<span class="attribute">#[<span class="ident">macro_use</span>]</span>
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">matches</span>;
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">cssparser</span>;
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">ego_tree</span>;
+<span class="attribute">#[<span class="ident">macro_use</span>]</span>
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">html5ever</span>;
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">selectors</span>;
-<span class="attribute">#[<span class="ident">macro_use</span>]</span>
-<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">string_cache</span>;
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">tendril</span>;
 
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">html</span>::<span class="ident">Html</span>;
