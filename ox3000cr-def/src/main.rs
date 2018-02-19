@@ -57,8 +57,7 @@ fn pages_uri_and_next(uri: Uri, handle: Handle) -> hyper::Result<(Vec<String>, O
 
     let select_next = Selector::parse("#paging a").unwrap();
     let link = body.select(&select_next)
-        .filter(|m| m.text().next().unwrap() == ">")
-        .next()
+        .find(|m| m.text().next().unwrap() == ">")
         .map(|m| m.value().attr("href").unwrap().parse().unwrap());
 
     Ok((uris, link))
